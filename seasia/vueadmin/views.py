@@ -98,6 +98,7 @@ def post_admin_data():
     if current_user.is_admin():
         res={}
         query = request.json
+
         if query['op']=='getValues':
             pid = query['dataID']
             p = Point.query.get(pid)
@@ -106,17 +107,19 @@ def post_admin_data():
             for f in Point.get_external_fields():
                 res['fields'].append({"field":f, "data":getattr(p,f)})
             res['fields'].append({"field":'geopointAc',"data":{'id':p.geo.id, 'name':p.geo.name} })
+
         elif query['op']=='saveEdited':
             res['status']='ok'
             pid = query['dataID']
             p = Point.query.get(pid)
             for key, value in query['fields'].items():
-                print (key)
-                print (value)
                 if value:
                     setattr(p, key, value)
-                db.session.add(p)
-                db.session.commit()
+            geo_id = query['fields']['geopointAc']['id']
+            print ('>>>>>'+str(geo_id))
+            if geo_id !=-1: p.geoId=geo_id
+            db.session.add(p)
+            db.session.commit()
         return json.dumps(res)
 
 @vueadmin.route('/post-geopoints', methods=['POST'])

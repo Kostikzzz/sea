@@ -78,7 +78,7 @@ var cScreen = Vue.extend({
         },
         'updateFormData':function(e){
             this.componentsData[e.mark]=e.cvalue;
-        
+            console.log(JSON.stringify(this.componentsData));
             // ADMIN EXT
             if (e.mark=='geopointAc'){
                 this.$broadcast('eSetValue',{target:'pointName', data:e.cvalue.name});
@@ -86,7 +86,6 @@ var cScreen = Vue.extend({
             // 
         },
         eSubmitFormData:function(){
-            alert(this.state.op+' : '+this.state.id);
             var self = this;
             if (this.state.op=="edit"){
                 getResults('/'+this.datasource, 'json', {op:'saveEdited', tid:this.mark, 'dataID':this.state.id, fields:this.componentsData}, function(res){
@@ -323,7 +322,7 @@ var cAcInput=Vue.extend({
           },
           showingAc:false,
           autocomplete:[],
-          selectedValue:{},
+          selectedValue:{id:-1},
           preSelected:-1
         });
     },
@@ -342,7 +341,7 @@ var cAcInput=Vue.extend({
                 this.txt=this.default.name;
             } else {
                 this.txt = '';
-                this.selectedValue={};
+                this.selectedValue={id:-1};
             }
             Vue.nextTick(this._submit());
         },
