@@ -1,0 +1,48 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block metas %}
+{{ super () }}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,600&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('vueadmin.static', filename='css/vueadmin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div id="top-bar" class="row">
+    {% block top_bar %}
+        {{config['PROJECT_NAME']}} :::: 
+        {{config['LANG']|upper}}
+        {% set url = url_for('root', _external=True) %}
+        <a href="{{url}}">{{url}}</a>
+        &nbsp;
+        USER: {{current_user.nickname}} - <a href="{{url_for('social.logout')}}"> LOG OUT </a>
+    {% endblock %}
+</div>
+
+<div id="middle" class="row">
+    {% block main_area %}{% endblock %}
+</div>
+</div>
+
+
+<div id="pre-footer"></div>
+        <div id="footer">
+            <p>FOOTER</p>
+            <br />
+            <br />
+        </div>
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script type="text/javascript" src="{{url_for('static', filename='lib/jquery.tablesorter.min.js')}}"> </script>
+{% endblock %}

@@ -1,0 +1,70 @@
+@import "config";
+
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+
+#pre-footer{
+    height:150px;
+}
+
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  color: $gray5;
+  background-color: $gray2;
+  /* Set the fixed height of the footer here */
+  height: 70px;
+  text-align: center;
+  p {
+    font-size: 80%;
+    }
+}
+
+body {
+    color: $gray2;
+    background-color: $gray6;
+    font-family: 'Open Sans', sans-serif;
+    /* font-family: 'Arimo', sans-serif; */
+    font-size: 15px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+/* ================================= NAVBAR =============================*/
+
+#navbar{
+    background-color: white;
+    color:$gray2;
+    border-width: 0 0 2px 0;
+    border-color: $gray5;
+    border-style: solid;
+    height:60px;
+}
+
+#user__image{
+    display: inline-block;
+}
+#user__nickname{
+    padding-left: 10px;
+    padding-top: 6px;
+    font-size: 18px;
+    display: inline-block;
+}
+
+
+
+
+@media screen and (max-width: 996px){
+
+
+}
+
+
+
+/* ================================= END NAVBAR =============================*/

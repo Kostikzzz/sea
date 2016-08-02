@@ -1,0 +1,95 @@
+{% extends 'vueadmin_base.html' %}
+
+
+{% block styles %}
+{{ super() }}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/ui.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/components.css') }}">
+{% endblock %}
+
+{% block top_bar %}
+    {{super()}}
+{% endblock %}
+
+
+
+{% block main_area %}
+<div class="container" id="main-container">
+
+
+    <div class="row">
+        <div class="col-lg-12" id="tabs-menu">
+            <span class="top-menu__item" v-for="s in screens" v-bind:class="{'top-menu__item--selected':$index==selectedScreen}" v-text="s.mark" v-if="s.menu" v-on:click="activateScreen(s.mark)"></span>
+        </div>
+    </div>
+    <div class="divider"></div>
+
+
+    <div class="row">
+        <div class="col-lg-12" id="main-area">
+                <c-screen mark="screenPointsTable" type="table">
+                    <c-table mark="pointsTable" datasource="post-admin-tables"></c-table>
+                </c-screen>
+
+                <c-screen mark="screenEditPoint" datasource="post-admin-data" type="form">
+                    <div class="row">
+                        <div class="col-lg-12"><h2>Add new point</h2></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <section><div class="section-body">
+                            <c-ac-input caption="Geo Point" mark="geopointAc" datasource="post-geopoints"></c-ac-input>
+                            <c-input mark="pointName" caption="Point Name" size="24" max="50"></c-input>
+                            </div></section>
+                        </div>
+                        <div class="col-lg-3">
+                            <section><div class="section-body">
+                            <c-rating caption="Beach" mark="rtBch"></c-rating>
+                            <c-rating caption="Nature" mark="rtNat"></c-rating>
+                            <c-rating caption="History" mark="rtHst"></c-rating>
+                            <c-rating caption="Culture" mark="rtClt"></c-rating>
+                            <c-rating caption="Food" mark="rtFod"></c-rating>
+                            <c-rating caption="Diving" mark="rtDiv"></c-rating>
+                            <c-rating caption="Kids" mark="rtKid"></c-rating>
+                            <c-rating caption="Shopping" mark="rtShp"></c-rating>
+                            </div></section>
+                        </div>
+                        <div class="col-lg-4">
+                            <section><div class="section-body">
+                                <c-input mark="pointPop" caption="Popularity" size="1" max="2" default="3"></c-input>
+                                <c-input mark="absMin" caption="Abs Min" size="1" max="2" default="0"></c-input>
+                                <c-input mark="recMin" caption="Rec Min" size="1" max="2" default="0"></c-input>
+                                <c-input mark="recMax" caption="Rec Max" size="1" max="2" default="0"></c-input>
+                                <c-input mark="absMax" caption="Abs Max" size="1" max="2" default="0"></c-input>
+                            </div></section>
+                        </div>
+                        <div class="col-lg-2">
+                            <c-button mark="editPointSubmitButton" generate="eSubmitFormData" wrap="btn-warning btn-large"> Save point</c-button> 
+                        </div>
+              
+                    </div>
+                </c-screen>
+
+
+                <c-screen mark="screenGeosTable" type="table">
+                    <div id="toolbar"></div>
+                    <c-table mark="geosTable" datasource="post-admin-tables" renew="oneTime" ></c-table>
+                </c-screen>
+
+        </div>
+    </div>
+
+
+
+
+</div>
+  
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script type="text/javascript" src="{{url_for('static', filename='lib/vue.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/common.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/components.js')}}"></script>
+<script type="text/javascript" src="{{url_for('vueadmin.static', filename='js/vueadmin.js')}}"></script>
+{% endblock %}

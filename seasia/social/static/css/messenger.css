@@ -1,0 +1,95 @@
+/* line 4, scss/messenger.scss */
+ul {
+  padding: 0;
+}
+
+/* line 8, scss/messenger.scss */
+li.v__contact-list__item {
+  list-style: none;
+  display: block;
+  width: 100%;
+  background-color: #f8f8f8;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  padding: 5px;
+}
+/* line 16, scss/messenger.scss */
+li.v__contact-list__item:hover {
+  background-color: #0088cc;
+  color: white;
+  cursor: pointer;
+}
+
+/* line 22, scss/messenger.scss */
+li.v__contact-list__item--selected {
+  background-color: #ffc501;
+  color: white;
+}
+
+/* line 27, scss/messenger.scss */
+.msg__bubble {
+  border-radius: 6px;
+  padding: 10px;
+}
+
+/* line 33, scss/messenger.scss */
+.msg__to-me .msg__bubble {
+  background-color: #ffeaa5;
+}
+
+/* line 39, scss/messenger.scss */
+.msg__from-me .msg__bubble {
+  background-color: #c8efb1;
+}
+
+/* line 44, scss/messenger.scss */
+#msg__textarea {
+  width: 100%;
+  resize: vertical;
+  padding: .5em;
+  border: 0.1em solid #ccc;
+  border-radius: 6px;
+}
+
+/* line 52, scss/messenger.scss */
+#msg__send-button {
+  width: 100%;
+  margin-top: 5px;
+}
+
+/* line 57, scss/messenger.scss */
+.contact-avatar {
+  display: inline-block;
+  margin-right: 5px;
+  height: 40px;
+}
+
+/* line 63, scss/messenger.scss */
+#v__chat-header__title {
+  float: left;
+}
+
+/* line 67, scss/messenger.scss */
+#v__chat-header__controls {
+  float: right;
+}
+
+/* line 71, scss/messenger.scss */
+#v__chat-header__ban-button {
+  display: none;
+}
+
+/* line 75, scss/messenger.scss */
+#v__chat-header__status {
+  display: none;
+}
+
+/* line 79, scss/messenger.scss */
+.ban-disabled {
+  color: #c6c6c6;
+}
+
+/* line 83, scss/messenger.scss */
+.ban-enabled {
+  color: #ff4e2b;
+}

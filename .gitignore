@@ -1,0 +1,7 @@
+seasia/config.py
+seasia/static/photos
+seasia/social/static/images
+__pycache__
+seasia/__pycache__
+seasia/upload
+*.pyc
