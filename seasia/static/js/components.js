@@ -26,12 +26,13 @@ Vue.directive('click-outside', {
 // C-SCREEN COMPONENT ================================
 
 var cScreen = Vue.extend({
-    props:['mark','caption','wrap', 'datasource','type'],
+    props:['mark','wrap', 'datasource','type'],
     data:function(){
         return {
             active:false,
             componentsData:{},
-            state:{}
+            state:{}, 
+            currentCaption: null
         }
     },
     methods:{
@@ -40,6 +41,7 @@ var cScreen = Vue.extend({
             state:{}
             active:false;
             this.$broadcast('eResetAll');
+            //alert('screen RESET')
         },
         preloadData:function(dataID, callback){
             var self = this;
@@ -58,20 +60,27 @@ var cScreen = Vue.extend({
         'eActivateScreen':function(e){
             var self = this;
             if (e.target==this.mark){
-                
-                if(e.cmd && e.cmd.op=="edit"){
+                if (e.cmd){
                     self._reset();
                     self.active =  true;
-                    this.preloadData(e.cmd.id, function(){
-                         self.state = {op:e.cmd.op, id:e.cmd.id};
-                    });
+                    self.currentCaption =e.cmd.caption;
+                    if(e.cmd.op=="edit"){
+                        this.preloadData(e.cmd.id, function(){
+                             self.state = {op:e.cmd.op, id:e.cmd.id};
+                        });
 
-                }else{
+                    } else if (e.cmd.op=="add"){
+                        self.state = {op:e.cmd.op, id:null};
+                    }
+                }
+
+                else{
                     this._reset();
                     this.active = true;
                 }
                
             } else {
+                // Not for this comp
                 this._reset;
                 this.active = false;
             }
@@ -87,17 +96,20 @@ var cScreen = Vue.extend({
         },
         eSubmitFormData:function(){
             var self = this;
-            if (this.state.op=="edit"){
-                getResults('/'+this.datasource, 'json', {op:'saveEdited', tid:this.mark, 'dataID':this.state.id, fields:this.componentsData}, function(res){
-                    if (res.status=='ok'){
 
-                    }
-                });
-            }
+            getResults('/'+this.datasource, 'json', {op:this.state.op, tid:this.mark, 'dataID':this.state.id, fields:this.componentsData}, function(res){
+                if (res.status=='ok'){
+                    self.$dispatch('eScreenFinished', {emitter:self.mark})
+                }
+            });
+
             
         }
     },
     template: '<div class="c-screen {{wrap}}" v-show="active">\
+                <div class="row" v-if="currentCaption">\
+                        <div class="col-lg-12"><h2>{{currentCaption}}</h2></div>\
+                </div>\
               <slot></slot> </div>\
                 </div>'
 });
@@ -294,6 +306,19 @@ var cRating=Vue.extend({
         eSetValue:function(e){
             if (e.target==this.mark) this.rating = e.data;
             Vue.nextTick(this._submit);
+        }, 
+        eResetAll:function(){
+            if (this.default){
+                this.rating=parseInt(this.default);
+            } else {
+                this.rating = 0;
+            }
+            Vue.nextTick(this._submit());
+        },
+        eResetToDefaults:function(e){
+            if (e.target==this.mark) {
+                this.$emit('eResetAll');
+            }
         }
     },
     
@@ -629,4 +654,69 @@ var cDualToggle=Vue.extend({
 
 Vue.component('c-dual-toggle', cDualToggle);
 
+// C-GRID
+
+Vue.component('c-grid', {
+  props: {
+    filterKey: String,
+    mark: String
+  },
+  data: function () {
+    return {
+      sortKey: '',
+      so:1,
+      data: [
+      { name: 'Chuck Norris', power: Infinity },
+      { name: 'Bruce Lee', power: 9000 },
+      { name: 'Jackie Chan', power: 7000 },
+      { name: 'Jet Li', power: 8000 }
+    ],
+      columns:['name', 'power']
+    }
+  },
+  methods: {
+    sortBy: function (key) {
+      this.sortKey = key;
+      this.so=this.so*-1;
+    },
+    makeSortOrders: function(){
+            this.sortOrders={};
+            var self=this;
+            this.columns.forEach(function (key) {
+                self.sortOrders[key] = 1
+            });
+    }
+  },
+  events:{
+    eSetValue:function(e){
+        if (e.target==this.mark){
+            this.data=e.data.tableData;
+            this.columns = e.data.tableColumns;
+        }
+    }
+  },
+    template: ' <div class="c-grid"><table>\
+                <thead>\
+                  <tr>\
+                    <th v-for="key in columns"\
+                      v-on:click="sortBy(key)"\
+                      :class="{active: sortKey == key}">\
+                      {{key | capitalize}}\
+                      <span class="arrow" v-if="sortKey == key"\
+                        :class="so > 0 ? \'asc\' : \'dsc\'">\
+                      </span>\
+                    </th>\
+                  </tr>\
+                </thead>\
+                <tbody>\
+                  <tr v-for="entry in data | filterBy filterKey | orderBy sortKey so">\
+                    <td v-for="key in columns">\
+                      {{entry[key]}}\
+                    </td>\
+                  </tr>\
+                </tbody>\
+              </table></div>'
+  
+
+});
 

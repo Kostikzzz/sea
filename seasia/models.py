@@ -39,9 +39,16 @@ class Point(db.Model):
     rtFod = db.Column(db.Integer)
     rtShp = db.Column(db.Integer)
     rtKid = db.Column(db.Integer)
+    rtNlf = db.Column(db.Integer)
 
-    def get_external_fields():
-        return ['id','pointName','pointPop','absMin','absMax','recMin','recMax', 'rtKid','rtShp','rtFod','rtDiv','rtNat','rtClt','rtHst','rtBch']
+    fields = ['id','pointName','pointPop','absMin','absMax','recMin','recMax', 'rtKid','rtShp','rtFod','rtDiv','rtNat','rtClt','rtHst','rtBch','rtNlf']
+
+    def getDict(self):
+        res={}
+        for f in self.fields:
+            res[f]=getattr(self, f)
+        return res
+
 
 
 class Superroute(db.Model):

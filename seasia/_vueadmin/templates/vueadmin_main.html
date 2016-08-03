@@ -27,14 +27,18 @@
 
     <div class="row">
         <div class="col-lg-12" id="main-area">
-                <c-screen mark="screenPointsTable" type="table">
-                    <c-table mark="pointsTable" datasource="post-admin-tables"></c-table>
+
+                <c-screen mark="screenEditRoute" type="form" caption="Edit route">
+                ddd
+                    <c-ac-input caption="Route Point" mark="pointAc" datasource="post-points"></c-ac-input>
+                </c-screen>
+                <c-screen mark="screenPointsTable" type="table" caption="Route points">
+                    <c-button mark="editPointSubmitButton" generate="eAddNewPoint" wrap="btn-warning btn-xs">+ADD NEW</c-button> 
+                    <c-table mark="pointsTable" datasource="post-admin-tables" ></c-table>
                 </c-screen>
 
-                <c-screen mark="screenEditPoint" datasource="post-admin-data" type="form">
-                    <div class="row">
-                        <div class="col-lg-12"><h2>Add new point</h2></div>
-                    </div>
+                <c-screen mark="screenEditPoint" datasource="post-admin-data" type="form" caption="Edit point">
+                    
                     <div class="row">
                         <div class="col-lg-3">
                             <section><div class="section-body">
@@ -52,11 +56,12 @@
                             <c-rating caption="Diving" mark="rtDiv"></c-rating>
                             <c-rating caption="Kids" mark="rtKid"></c-rating>
                             <c-rating caption="Shopping" mark="rtShp"></c-rating>
+                            <c-rating caption="Nightlife" mark="rtNlf"></c-rating>
                             </div></section>
                         </div>
                         <div class="col-lg-4">
                             <section><div class="section-body">
-                                <c-input mark="pointPop" caption="Popularity" size="1" max="2" default="3"></c-input>
+                                <c-input mark="pointPop" caption="Popularity" size="1" max="2" default="0"></c-input>
                                 <c-input mark="absMin" caption="Abs Min" size="1" max="2" default="0"></c-input>
                                 <c-input mark="recMin" caption="Rec Min" size="1" max="2" default="0"></c-input>
                                 <c-input mark="recMax" caption="Rec Max" size="1" max="2" default="0"></c-input>

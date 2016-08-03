@@ -15,9 +15,8 @@ from .db import db
 from .config import DEBUG, SECRET_KEY, DBURI, MAINTENANCE, PROJECT_NAME, MAIL_SERVER, MAIL_PORT, MAIL_USE_TLS, MAIL_USE_SSL, MAIL_USERNAME, MAIL_PASSWORD
 from .social import social, oauth
 from .social.models import User
-from .vueadmin import vueadmin
+from .admin import admin
 
-from flask_admin import Admin
 # from .mailer import mail
 
 
@@ -25,7 +24,7 @@ from flask_admin import Admin
 app = Flask(__name__)
 
 app.register_blueprint(social)
-app.register_blueprint(vueadmin)
+app.register_blueprint(admin)
 
 
 app.debug = DEBUG

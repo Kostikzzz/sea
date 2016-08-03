@@ -195,3 +195,65 @@
   background-color: #55d426;
   color: white;
 }
+
+/* line 204, scss/components.scss */
+table {
+  border: 2px solid #42b983;
+  border-radius: 3px;
+  background-color: #fff;
+}
+
+/* line 210, scss/components.scss */
+th {
+  background-color: #42b983;
+  color: rgba(255, 255, 255, 0.66);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -user-select: none;
+}
+
+/* line 219, scss/components.scss */
+td {
+  background-color: #f9f9f9;
+}
+
+/* line 223, scss/components.scss */
+th, td {
+  min-width: 120px;
+  padding: 10px 20px;
+}
+
+/* line 228, scss/components.scss */
+th.active {
+  color: #fff;
+}
+
+/* line 232, scss/components.scss */
+th.active .arrow {
+  opacity: 1;
+}
+
+/* line 236, scss/components.scss */
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0.66;
+}
+
+/* line 245, scss/components.scss */
+.arrow.asc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #fff;
+}
+
+/* line 251, scss/components.scss */
+.arrow.dsc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}

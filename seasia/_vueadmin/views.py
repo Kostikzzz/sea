@@ -60,9 +60,9 @@ def post_admin_tables():
             elif query['tid']=='pointsTable':
                 points = Point.query.all()
                 res['tableRows']=[]
-                res['tableHeader']=['Id','Name','GEO']
+                res['tableHeader']=['Id','Name','GEO', 'pop','bch']
                 for p in points:
-                    res['tableRows'].append([p.id, p.pointName, p.geo.name])
+                    res['tableRows'].append([p.id, p.pointName, p.geo.name, p.pointPop, p.rtBch])
                 res['status']='ok'
             else:
                 res['status']='unknown table'
@@ -108,10 +108,13 @@ def post_admin_data():
                 res['fields'].append({"field":f, "data":getattr(p,f)})
             res['fields'].append({"field":'geopointAc',"data":{'id':p.geo.id, 'name':p.geo.name} })
 
-        elif query['op']=='saveEdited':
+        else:
             res['status']='ok'
             pid = query['dataID']
-            p = Point.query.get(pid)
+            if query['op']=='edit':
+                p = Point.query.get(pid)
+            elif query['op']=='add':
+                p =Point()
             for key, value in query['fields'].items():
                 print(key, value)
                 setattr(p, key, value)
@@ -135,6 +138,26 @@ def post_geopoints():
         res['geos']=[]
         for g in geos:
             res['geos'].append({"name":g.name, "id":g.id})
+        res['status']='ok'
+
+    else:
+        res['status']="unauthorized"
+
+    return json.dumps(res)
+
+@vueadmin.route('/post-points', methods=['POST'])
+@login_required
+def post_points():
+    if current_user.is_admin():
+        res={}
+        query = request.json
+
+        if query['cmd']=="getAutocomplete":
+            points=Point.query.filter(Point.name.startswith(query['string'])).order_by(desc('number')).limit(10)
+
+        res['points']=[]
+        for p in points:
+            res['points'].append({"name":p.name, "id":p.id})
         res['status']='ok'
 
     else:
