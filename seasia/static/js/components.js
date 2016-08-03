@@ -280,6 +280,7 @@ var cRating=Vue.extend({
 
         uiSetRating:function(i){
             this.rating=i;
+            console.log(i);
             Vue.nextTick(this._submit);
         }
 

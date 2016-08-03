@@ -113,8 +113,8 @@ def post_admin_data():
             pid = query['dataID']
             p = Point.query.get(pid)
             for key, value in query['fields'].items():
-                if value:
-                    setattr(p, key, value)
+                print(key, value)
+                setattr(p, key, value)
             geo_id = query['fields']['geopointAc']['id']
             print ('>>>>>'+str(geo_id))
             if geo_id !=-1: p.geoId=geo_id
