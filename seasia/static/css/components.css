@@ -224,12 +224,13 @@
 /* line 231, scss/components.scss */
 .c-grid th.active {
   color: #fff;
+  background-color: #ffc501;
 }
-/* line 235, scss/components.scss */
+/* line 236, scss/components.scss */
 .c-grid th.active .arrow {
   opacity: 1;
 }
-/* line 239, scss/components.scss */
+/* line 240, scss/components.scss */
 .c-grid .arrow {
   display: inline-block;
   vertical-align: middle;
@@ -238,13 +239,13 @@
   margin-left: 5px;
   opacity: 0.66;
 }
-/* line 248, scss/components.scss */
+/* line 249, scss/components.scss */
 .c-grid .arrow.asc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 4px solid #fff;
 }
-/* line 254, scss/components.scss */
+/* line 255, scss/components.scss */
 .c-grid .arrow.dsc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;

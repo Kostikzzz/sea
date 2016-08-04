@@ -6,6 +6,7 @@ var adminRoot = new Vue({
         searchQuery: '',
         showEditForm:false,
         formOp:null,
+        dataId:-1,
         formOpCaption:{'add':'Add new point','edit':'Edit point'},
         form: [
             {group:1,col:4, elements:[
@@ -35,6 +36,9 @@ var adminRoot = new Vue({
             }
         ]
       },
+
+
+//  TEMPLATE ==================================================================================================================
     template: '<div id="demo">\
                 <div id="toolbar"><button class="btn btn-xs btn-warning" v-on:click="addNew">+ ADD NEW</button></div>\
                 <div class="divider"><br/></div>\
@@ -58,7 +62,7 @@ var adminRoot = new Vue({
                             <button class="btn btn-large btn-success" style="width:100%" @click="formCancel">CANCEL</button>\
                         </div>\
                         <div class="col-lg-3 col-lg-offset-6">\
-                            <button class="btn btn-large btn-warning" style="width:100%">SUBMIT</button>\
+                            <button class="btn btn-large btn-warning" style="width:100%" @click="formSubmit">SUBMIT</button>\
                         </div>\
                     </div>\
                 </div>\
@@ -72,6 +76,8 @@ var adminRoot = new Vue({
                   </c-grid>\
                 </div></div>',
 
+
+//  METHODS ==================================================================================================================
     methods:{
         loadTableData:function(){
             var self = this;
@@ -87,6 +93,7 @@ var adminRoot = new Vue({
             getResults(this.dataSource, 'json', {action:"getFormData", data_id:did}, function(res){
                 if (res.status='ok'){
                     console.log(JSON.stringify(res));
+                    self.dataId=did;
                     res.formData.forEach(function(f){
                         console.log('broadcasting setvalue to '+f.mark);
                         self.$broadcast('eSetValue',{target:f.mark, data:f.data});
@@ -97,6 +104,7 @@ var adminRoot = new Vue({
         addNew:function(){
             this.resetAll();
             this.formOp='add';
+            this.dataId=-1;
             this.showEditForm=true;
         },
         editEntry:function(e){
@@ -110,11 +118,25 @@ var adminRoot = new Vue({
         formCancel:function(){
             this.resetAll();
             this.showEditForm=false;
+        },
+        formSubmit:function(){
+            var self=this;
+            getResults(this.dataSource, 'json', {action:"saveFormData", data_id:this.dataId, formData:this.formData}, function(res){
+                if (res.status=='ok'){
+                    self.resetAll();
+                    self.showEditForm=false;
+                    self.loadTableData();
+                } else {
+                    alert('There is an error saving the form data :(');
+                }
+            });
         }
     },
     created:function(){
         this.loadTableData();
     },
+
+//  EVENTS ==================================================================================================================
     events:{
         eTableDblClick:function(e){
             console.log('dblclick with '+e.data+' from '+e.emitter);

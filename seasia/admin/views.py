@@ -40,4 +40,20 @@ def admin_root():
                 res['geos'].append({"name":g.name, "id":g.id})
             res['status']='ok'
 
+        elif q['action']=='saveFormData':
+            if q['data_id']>0:
+                p = Point.query.get(q['data_id'])
+                
+            else:
+                p=Point()
+
+            for f in p.fields():
+                if f in q['formData']:
+                    setattr(p, f, q['formData'][f])
+
+            db.session.add(p)
+            db.session.commit()
+            res['status']='ok'
+
+
         return json.dumps(res)

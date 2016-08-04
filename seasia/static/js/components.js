@@ -584,6 +584,7 @@ Vue.component('c-cb-list', cCbList);
 
 var cDuration = Vue.extend({
 
+    // C-DURATION -- DATA . . . . . . . . . . . . . . . . . . . . . . . . . . 
     data: function(){
         return {
             number: 14,
@@ -595,8 +596,8 @@ var cDuration = Vue.extend({
         }
     },
 
+    // C-DURATION -- METHODS . . . . . . . . . . . . . . . . . . . . . . . . . . 
     methods:{
-
         inc: function(){
             this.number++;
         },
@@ -624,8 +625,10 @@ var cDuration = Vue.extend({
         }
     },
 
+    // C-DURATION -- PARAMS . . . . . . . . . . . . . . . . . . . . . . . . . . 
     params:['wrap'],
 
+    // C-DURATION -- TEMPLATE . . . . . . . . . . . . . . . . . . . . . . . . . . 
     template:'<div class="c-duration {{wrap}}"><label for="days-count" >Duration</label> \
                     <div class="c-duration__body">\
                         <span v-on:click="dec" class="c-duration__pm glyphicon glyphicon-minus-sign"></span>\
@@ -642,16 +645,21 @@ var cDuration = Vue.extend({
 
 Vue.component('c-duration', cDuration);
 
-// COMPONENT C-DUAL-TOGGLE ==================================================================
+//  COMPONENT C-DUAL-TOGGLE ================================================================================================
 
 var cDualToggle=Vue.extend({
+
+    // C-DUAL-TOGGLE -- DATA . . . . . . . . . . . . . . . . . . . . . . . . . . 
     data: function(){
         return {
             opt1:'c-dual-toggle__selected',
             opt2:''
         }
     },
+
+    // C-DUAL-TOGGLE -- PROPS . . . . . . . . . . . . . . . . . . . . . . . . . . 
     props: ['caption1','caption2', 'mark', 'status', 'wrap'],
+
     methods: {
         selectOpt:function(v){
             if (v=="0"){
@@ -663,6 +671,8 @@ var cDualToggle=Vue.extend({
             }
         }
     },
+
+    // C-DUAL-TOGGLE -- CREATED . . . . . . . . . . . . . . . . . . . . . . . . . . 
     created:function(){
         this.selectOpt(this.status);
     },
@@ -675,50 +685,60 @@ var cDualToggle=Vue.extend({
 
 Vue.component('c-dual-toggle', cDualToggle);
 
-// C-GRID
+//  COMPONENT C-GRID ================================================================================================
 
 Vue.component('c-grid', {
-  props: {
-    filterKey: String,
-    mark: String
-  },
-  data: function () {
-    return {
-      sortKey: '',
-      so:1,
-      data: [
-      { name: 'Chuck Norris', power: Infinity },
-      { name: 'Bruce Lee', power: 9000 },
-      { name: 'Jackie Chan', power: 7000 },
-      { name: 'Jet Li', power: 8000 }
-    ],
-      columns:['name', 'power']
-    }
-  },
-  methods: {
-    sortBy: function (key) {
-      this.sortKey = key;
-      this.so=this.so*-1;
+
+    // C-GRID -- PROPS . . . . . . . . . . . . . . . . . . . . . . . . . . 
+    props: {
+        filterKey: String,
+        mark: String
     },
-    makeSortOrders: function(){
+
+    // C-GRID -- DATA . . . . . . . . . . . . . . . . . . . . . . . . . . 
+    data: function () {
+        return {
+            sortKey: '',
+            so:1,
+            data: [
+                { name: 'Chuck Norris', power: Infinity },
+                { name: 'Bruce Lee', power: 9000 },
+                { name: 'Jackie Chan', power: 7000 },
+                { name: 'Jet Li', power: 8000 }
+            ],
+            columns:['name', 'power']
+        }
+    },
+
+    // C-GRID -- METHODS . . . . . . . . . . . . . . . . . . . . . . . . . . 
+    methods: {
+        sortBy: function (key) {
+            this.sortKey = key;
+            this.so=this.so*-1;
+        },
+        makeSortOrders: function(){
             this.sortOrders={};
             var self=this;
             this.columns.forEach(function (key) {
                 self.sortOrders[key] = 1
             });
-    },
-    dispatchDblClick:function(i){
-        this.$dispatch('eTableDblClick', {emitter:this.mark, data:this.data[i].id})
-    }
-  },
-  events:{
-    eSetValue:function(e){
-        if (e.target==this.mark){
-            this.data=e.data.tableData;
-            this.columns = e.data.tableColumns;
+        },
+        dispatchDblClick:function(i){
+            this.$dispatch('eTableDblClick', {emitter:this.mark, data:this.data[i].id})
         }
-    }
-  },
+    },
+
+    // C-GRID -- EVENTS . . . . . . . . . . . . . . . . . . . . . . . . . . 
+    events:{
+        eSetValue:function(e){
+            if (e.target==this.mark){
+                this.data=e.data.tableData;
+                this.columns = e.data.tableColumns;
+            }
+        }
+    },
+
+    // C-GRID -- TEMPLATE . . . . . . . . . . . . . . . . . . . . . . . . . . 
     template: ' <div class="c-grid"><table>\
                 <thead>\
                   <tr>\
@@ -740,7 +760,5 @@ Vue.component('c-grid', {
                   </tr>\
                 </tbody>\
               </table></div>'
-  
-
 });
 
