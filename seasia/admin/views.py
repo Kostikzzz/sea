@@ -12,9 +12,10 @@ from sqlalchemy import desc
 def admin_root():
     if request.method=='GET':
         return render_template('admin_root.html')
-    else:
+    elif request.method=='POST':
         q = request.json
         res={}
+        
         if q['action']=='getTableData':
             points = Point.query.all()
             res['tableData']=[]
@@ -22,4 +23,18 @@ def admin_root():
                 res['tableData'].append(p.getDict())
             res['tableColumns']=p.fields
             res['status']='ok'
+
+        elif q['action']=='getFormData':
+            point = Point.query.get(q['data_id'])
+            res['formData']=point.getList()
+            res['status']='ok'
+
+        elif q['action']=='getAutocomplete':
+            geos=Geo.query.filter(Geo.name.startswith(q['string'])).order_by(desc(Geo.number)).limit(12)
+            res={}
+            res['geos']=[]
+            for g in geos:
+                res['geos'].append({"name":g.name, "id":g.id})
+            res['status']='ok'
+
         return json.dumps(res)

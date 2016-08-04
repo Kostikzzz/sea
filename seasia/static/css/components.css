@@ -201,8 +201,9 @@
   border: 2px solid #42b983;
   border-radius: 3px;
   background-color: #fff;
+  width: 100%;
 }
-/* line 211, scss/components.scss */
+/* line 212, scss/components.scss */
 .c-grid th {
   background-color: #42b983;
   color: rgba(255, 255, 255, 0.66);
@@ -211,24 +212,24 @@
   -moz-user-select: none;
   -user-select: none;
 }
-/* line 220, scss/components.scss */
+/* line 221, scss/components.scss */
 .c-grid td {
   background-color: #f9f9f9;
   cursor: pointer;
 }
-/* line 225, scss/components.scss */
+/* line 226, scss/components.scss */
 .c-grid th, .c-grid td {
   padding: 2px 5px;
 }
-/* line 230, scss/components.scss */
+/* line 231, scss/components.scss */
 .c-grid th.active {
   color: #fff;
 }
-/* line 234, scss/components.scss */
+/* line 235, scss/components.scss */
 .c-grid th.active .arrow {
   opacity: 1;
 }
-/* line 238, scss/components.scss */
+/* line 239, scss/components.scss */
 .c-grid .arrow {
   display: inline-block;
   vertical-align: middle;
@@ -237,13 +238,13 @@
   margin-left: 5px;
   opacity: 0.66;
 }
-/* line 247, scss/components.scss */
+/* line 248, scss/components.scss */
 .c-grid .arrow.asc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 4px solid #fff;
 }
-/* line 253, scss/components.scss */
+/* line 254, scss/components.scss */
 .c-grid .arrow.dsc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;

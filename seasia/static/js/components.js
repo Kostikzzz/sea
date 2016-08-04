@@ -200,7 +200,14 @@ Vue.component('c-button',cButton);
 
 var cInput = Vue.extend({
 
-    props:['mark', 'caption', 'wrap', 'size', 'max', 'default'],
+    props:{
+        'mark':String, 
+        'caption':String, 
+        'wrap':String, 
+        'size':Number, 
+        'max':Number,
+        'default':[String, Number]
+    },
 
     data:function(){
         return {
@@ -212,13 +219,13 @@ var cInput = Vue.extend({
 
         // COMMON METHODS
         _submit:function(){
-            this.$dispatch('updateFormData',{'mark':this.mark, cvalue:this.text });
+            this.$dispatch('eUpdateFormData',{'mark':this.mark, cvalue:this.text });
         },
         _reset:function(){
             if (this.default){
                 this.text=this.default;
-                Vue.nextTick(this._submit());
-                console.log('>input reset')
+            } else {
+                this.text='';
             }
         },
 
@@ -230,6 +237,7 @@ var cInput = Vue.extend({
 
     created:function(){
         this._reset();
+
     },
 
     events:{
@@ -237,20 +245,19 @@ var cInput = Vue.extend({
         eSetValue:function(e){
             if (e.target==this.mark){
                 this.text = e.data;
-                Vue.nextTick(this._submit());
+                this._submit();
             }
         },        
         eResetToDefaults:function(e){
             if (e.target==this.mark){
                 this._reset();
-                Vue.nextTick(this._submit());
+                this._submit();
             }
             
         },
         eResetAll:function(){
-            
             this._reset();
-            Vue.nextTick(this._submit());
+            this._submit();
         }
 
     },
@@ -278,7 +285,7 @@ var cRating=Vue.extend({
     methods:{
 
         _submit:function(){
-            this.$dispatch('updateFormData',{'mark':this.mark, cvalue:this.rating });
+            this.$dispatch('eUpdateFormData',{'mark':this.mark, cvalue:this.rating });
         },
 
         _reset:function(){
@@ -315,7 +322,7 @@ var cRating=Vue.extend({
             } else {
                 this.rating = 0;
             }
-            Vue.nextTick(this._submit());
+            //Vue.nextTick(this._submit());
         },
         eResetToDefaults:function(e){
             if (e.target==this.mark) {
@@ -339,7 +346,7 @@ Vue.component('c-rating', cRating);
 
 var cAcInput=Vue.extend({
 
-    props:['mark', 'caption', 'wrap', 'datasource'],
+    props:['mark', 'caption', 'wrap', 'datasource', 'domId'],
 
     data:function(){
         return ({
@@ -359,8 +366,8 @@ var cAcInput=Vue.extend({
 
         _submit:function(){
             this.hideDropdown();
-            this.selectedValue.text=this.txt;
-            this.$dispatch('updateFormData',{'mark':this.mark, cvalue:this.selectedValue});
+            this.selectedValue.text=this.txt;//EXACT TEXT INPUT VALUE - NOT SENT!!!
+            this.$dispatch('eUpdateFormData',[{'mark':this.mark[0], cvalue:this.selectedValue.id},{'mark':this.mark[1], cvalue:this.selectedValue.name}]);
         },
 
         _reset:function(){
@@ -371,7 +378,7 @@ var cAcInput=Vue.extend({
                 this.txt = '';
                 this.selectedValue={id:-1};
             }
-            Vue.nextTick(this._submit());
+            //Vue.nextTick(this._submit());
         },
 
         // DROPDOWN SHOW-HIDE
@@ -383,7 +390,7 @@ var cAcInput=Vue.extend({
 
         hideDropdown:function(){
             this.show_dd=false;
-            $('#'+this.mark).trigger('blur');            
+            $('#'+this.domId).trigger('blur');            
         },
 
         // ON KEYUP
@@ -408,7 +415,7 @@ var cAcInput=Vue.extend({
                 this.preSelected--;
                 this.preSelected<0 ? this.preSelected=len-1 : true;
             } else if (this.txt.length>=2){
-                getResults('/'+this.datasource,'json',{cmd  :'getAutocomplete', string: this.txt}, function(res){
+                getResults(this.datasource,'json',{action:'getAutocomplete', string: this.txt}, function(res){
                     if (res.status=='ok'){
                         self.autocomplete = res.geos;
                         self.showingAc=true;
@@ -445,27 +452,39 @@ var cAcInput=Vue.extend({
             this.hideDropdown();
         },
         eSetPresets:function(e){
-            if (e.target==this.mark){
+            if (e.target==this.domId){
                 this.presets=e.data;
             }
         },
         eSetValue:function(e){
-            if (e.target==this.mark){
-                this.selectedValue=e.data;
-                this.txt = this.selectedValue.name;
+            if (inArray(e.target, this.mark)){
+                var pos = this.mark.indexOf(e.target);
+                if(pos==0){
+                    this.selectedValue.id=e.data;
+                    console.log('caught ID '+e.data);
+                } else if (pos==1){
+                    this.selectedValue.name=e.data;
+                    console.log('caught NAME '+e.data);
+                    this.txt = e.data;
+                }
+                this._submit();
             }
         }, 
         eResetAll:function(){
             this._reset();
+            this._submit()
         },
         eResetToDefaults:function(e){
-            if (e.target==this.mark) this._reset();
+            if (e.target==this.domId){
+                this._reset();
+                this._submit();
+            }
         }
     },
     
     template:'<div class="c-ac-input {{wrap}}">\
-                <label for="{{mark}}">{{caption}}</label> \
-                <input id="{{mark}}" class="form-control" v-bind:class="{\'has-dropdown\':show_dd}" type="text" v-on:click.stop="uiShowDropdown" v-model="txt"  v-on:focus="uiShowDropdown" v-on:keyup="uiChackAc"  /> \
+                <label for="{{domId}}">{{caption}}</label> \
+                <input id="{{domId}}" class="form-control" v-bind:class="{\'has-dropdown\':show_dd}" type="text" v-on:click.stop="uiShowDropdown" v-model="txt"  v-on:focus="uiShowDropdown" v-on:keyup="uiChackAc"  /> \
                 <div v-show="show_dd" class="ac-dropdown" v-click-outside="eCustomClickOutside"> \
                     <div v-if="!showingAc">\
                         <div class="ac-dropdown-header">{{presets.title}}</div>\
@@ -689,7 +708,7 @@ Vue.component('c-grid', {
             });
     },
     dispatchDblClick:function(i){
-        this.$dispatch('eTableDblClick', {emitter:this.mark, data:i})
+        this.$dispatch('eTableDblClick', {emitter:this.mark, data:this.data[i].id})
     }
   },
   events:{
