@@ -255,7 +255,9 @@ var cInput = Vue.extend({
 
     },
 
-    template:'<div class="c-input {{wrap}}" ><label>{{caption}}<input v-on:click="" v-on:keyup="uiKeyUp" v-model="text" maxlength="{{max}}" size="{{size}}" type="text" class="form-control"/></label></div>'
+    template:'<div class="c-input {{wrap}}" >\
+                <label>{{caption}}<input v-on:click="" v-on:keyup="uiKeyUp" v-model="text" maxlength="{{max}}" size="{{size}}" type="text" class="form-control"/></label>\
+                </div>'
 
 });
 
@@ -462,18 +464,18 @@ var cAcInput=Vue.extend({
     },
     
     template:'<div class="c-ac-input {{wrap}}">\
-                        <label for="{{mark}}">{{caption}}</label> \
-                        <input id="{{mark}}" class="form-control" v-bind:class="{\'has-dropdown\':show_dd}" type="text" v-on:click.stop="uiShowDropdown" v-model="txt"  v-on:focus="uiShowDropdown" v-on:keyup="uiChackAc"  /> \
-                        <div v-show="show_dd" class="ac-dropdown" v-click-outside="eCustomClickOutside"> \
-                            <div v-if="!showingAc">\
-                                <div class="ac-dropdown-header">{{presets.title}}</div>\
-                                <div class="ac-dropdown-item" v-for="l in presets.list" v-on:click="uiAcSelect($index)"><span>{{l}}</span></div> \
-                            </div>\
-                            <div v-if="showingAc">\
-                                <div class="ac-dropdown-item" v-for="l in autocomplete" v-bind:class="{\'ac-dropdown__item--preselected\':preSelected==$index}" v-on:click="uiAcSelect($index)"><span>{{l.name}}</span></div> \
-                            </div>\
-                        </div> \
-                    </div>'
+                <label for="{{mark}}">{{caption}}</label> \
+                <input id="{{mark}}" class="form-control" v-bind:class="{\'has-dropdown\':show_dd}" type="text" v-on:click.stop="uiShowDropdown" v-model="txt"  v-on:focus="uiShowDropdown" v-on:keyup="uiChackAc"  /> \
+                <div v-show="show_dd" class="ac-dropdown" v-click-outside="eCustomClickOutside"> \
+                    <div v-if="!showingAc">\
+                        <div class="ac-dropdown-header">{{presets.title}}</div>\
+                        <div class="ac-dropdown-item" v-for="l in presets.list" v-on:click="uiAcSelect($index)"><span>{{l}}</span></div> \
+                    </div>\
+                    <div v-if="showingAc">\
+                        <div class="ac-dropdown-item" v-for="l in autocomplete" v-bind:class="{\'ac-dropdown__item--preselected\':preSelected==$index}" v-on:click="uiAcSelect($index)"><span>{{l.name}}</span></div> \
+                    </div>\
+                </div> \
+            </div>'
 });
 
 Vue.component('c-ac-input', cAcInput);
@@ -685,6 +687,9 @@ Vue.component('c-grid', {
             this.columns.forEach(function (key) {
                 self.sortOrders[key] = 1
             });
+    },
+    dispatchDblClick:function(i){
+        this.$dispatch('eTableDblClick', {emitter:this.mark, data:i})
     }
   },
   events:{
@@ -709,7 +714,7 @@ Vue.component('c-grid', {
                   </tr>\
                 </thead>\
                 <tbody>\
-                  <tr v-for="entry in data | filterBy filterKey | orderBy sortKey so">\
+                  <tr v-on:dblclick="dispatchDblClick($index)" v-for="entry in data | filterBy filterKey | orderBy sortKey so">\
                     <td v-for="key in columns">\
                       {{entry[key]}}\
                     </td>\
