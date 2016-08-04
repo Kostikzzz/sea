@@ -15,13 +15,16 @@ def admin_root():
     elif request.method=='POST':
         q = request.json
         res={}
-        
+
         if q['action']=='getTableData':
             points = Point.query.all()
             res['tableData']=[]
             for p in points:
-                res['tableData'].append(p.getDict())
-            res['tableColumns']=p.fields
+                data = p.getDict()
+                data['country']=p.geo.country.name
+                res['tableData'].append(data)
+            res['tableColumns']=p.fields()
+            res['tableColumns'].append('country')
             res['status']='ok'
 
         elif q['action']=='getFormData':

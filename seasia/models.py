@@ -42,17 +42,18 @@ class Point(db.Model):
     rtKid = db.Column(db.Integer)
     rtNlf = db.Column(db.Integer)
 
-    fields = ['id','pointName','geoName','geoId','pointPop','absMin','absMax','recMin','recMax', 'rtKid','rtShp','rtFod','rtDiv','rtNat','rtClt','rtHst','rtBch','rtNlf']
+    def fields(self):
+        return ['id','pointName','geoName','geoId','pointPop','absMin','absMax','recMin','recMax', 'rtKid','rtShp','rtFod','rtDiv','rtNat','rtClt','rtHst','rtBch','rtNlf']
 
     def getDict(self):
         res={}
-        for f in self.fields:
+        for f in self.fields():
             res[f]=getattr(self, f)
         return res
 
     def getList(self):
         res=[]
-        for f in self.fields:
+        for f in self.fields():
             res.append({"mark":f,"data":getattr(self,f)})
         return res
 
