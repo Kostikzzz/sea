@@ -296,7 +296,7 @@ var cRating=Vue.extend({
             else{
                 this.rating = 0;
             }
-            Vue.nextTick(this._submit);
+            //Vue.nextTick(this._submit);
         },
 
         uiSetRating:function(i){
@@ -317,11 +317,13 @@ var cRating=Vue.extend({
             Vue.nextTick(this._submit);
         }, 
         eResetAll:function(){
-            if (this.default){
+            this._reset();
+            this._submit();
+            /*if (this.default){
                 this.rating=parseInt(this.default);
             } else {
                 this.rating = 0;
-            }
+            }*/
             //Vue.nextTick(this._submit());
         },
         eResetToDefaults:function(e){
@@ -724,7 +726,7 @@ Vue.component('c-grid', {
             });
         },
         dispatchDblClick:function(i){
-            this.$dispatch('eTableDblClick', {emitter:this.mark, data:this.data[i].id})
+            this.$dispatch('eTableDblClick', {emitter:this.mark, data:i['id']})
         }
     },
 
@@ -753,7 +755,7 @@ Vue.component('c-grid', {
                   </tr>\
                 </thead>\
                 <tbody>\
-                  <tr v-on:dblclick="dispatchDblClick($index)" v-for="entry in data | filterBy filterKey | orderBy sortKey so">\
+                  <tr v-for="entry in data | filterBy filterKey | orderBy sortKey so" v-on:dblclick="dispatchDblClick(entry)">\
                     <td v-for="key in columns">\
                       {{entry[key]}}\
                     </td>\
