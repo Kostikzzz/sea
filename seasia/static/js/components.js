@@ -23,164 +23,6 @@ Vue.directive('click-outside', {
 // ADMIN COMPONENTS ***********************************************
 
 
-// C-SCREEN COMPONENT ================================
-
-var cScreen = Vue.extend({
-    props:['mark','wrap', 'datasource','type'],
-    data:function(){
-        return {
-            active:false,
-            componentsData:{},
-            state:{}, 
-            currentCaption: null
-        }
-    },
-    methods:{
-        _reset:function(){
-            this.componentsData={};
-            state:{}
-            active:false;
-            this.$broadcast('eResetAll');
-            //alert('screen RESET')
-        },
-        preloadData:function(dataID, callback){
-            var self = this;
-            getResults('/'+this.datasource, 'json', {op:'getValues', tid:this.mark, 'dataID':dataID}, function(res){
-                if (res.status=='ok'){
-                    res.fields.forEach(function(f){
-                        var param = {target:f.field, data:f.data}
-                        self.$broadcast('eSetValue',param );
-                    });
-                    Vue.nextTick(callback());
-                }
-            });
-        }
-    },
-    events:{
-        'eActivateScreen':function(e){
-            var self = this;
-            if (e.target==this.mark){
-                if (e.cmd){
-                    self._reset();
-                    self.active =  true;
-                    self.currentCaption =e.cmd.caption;
-                    if(e.cmd.op=="edit"){
-                        this.preloadData(e.cmd.id, function(){
-                             self.state = {op:e.cmd.op, id:e.cmd.id};
-                        });
-
-                    } else if (e.cmd.op=="add"){
-                        self.state = {op:e.cmd.op, id:null};
-                    }
-                }
-
-                else{
-                    this._reset();
-                    this.active = true;
-                }
-               
-            } else {
-                // Not for this comp
-                this._reset;
-                this.active = false;
-            }
-        },
-        'updateFormData':function(e){
-            this.componentsData[e.mark]=e.cvalue;
-            console.log(JSON.stringify(this.componentsData));
-            // ADMIN EXT
-            if (e.mark=='geopointAc'){
-                this.$broadcast('eSetValue',{target:'pointName', data:e.cvalue.name});
-            }
-            // 
-        },
-        eSubmitFormData:function(){
-            var self = this;
-
-            getResults('/'+this.datasource, 'json', {op:this.state.op, tid:this.mark, 'dataID':this.state.id, fields:this.componentsData}, function(res){
-                if (res.status=='ok'){
-                    self.$dispatch('eScreenFinished', {emitter:self.mark})
-                }
-            });
-
-            
-        }
-    },
-    template: '<div class="c-screen {{wrap}}" v-show="active">\
-                <div class="row" v-if="currentCaption">\
-                        <div class="col-lg-12"><h2>{{currentCaption}}</h2></div>\
-                </div>\
-              <slot></slot> </div>\
-                </div>'
-});
-
-Vue.component('c-screen', cScreen);
-
-
-
-// C-TABLE COMPONENT =================================
-var cTable = Vue.extend({
-    props:['mark', 'datasource','renew'],
-
-    data:function(){
-        return{
-            tableRows:[],
-            tableHeader:[],
-            loaded:false
-        }
-    },
-    
-    methods:{
-        _reset:function(){
-            var self=this;
-            if ((this.renew=="oneTime" && !this.loaded) || (this.renew!="oneTime")){
-                getResults('/'+this.datasource, 'json', {cmd:'getTable', tid:this.mark}, function(res){
-                    if (res.status='ok'){
-                        self.tableRows= res.tableRows;
-                        self.tableHeader = res.tableHeader;
-                        Vue.nextTick(function(){
-                            $('#'+self.mark).tablesorter();
-                        });
-                    } else {
-                        console.log('There was an error loading table data');
-                    }
-                });
-            }
-
-        },
-        uiEditThisEntry:function(i){
-            this.$dispatch('eTableDblclick',{emitter:this.mark, data:this.tableRows[i]});
-        }
-    },
-
-    events:{
-        eResetAll:function(){
-            this._reset();
-        },
-        'eResetToDefaults':function(e){
-            if (e.target==this.mark) this._reset();
-        }
-    },
-
-    template:'  <div class="c-table">\
-                <table id="{{mark}}" class="tablesorter">\
-                <thead>\
-                    <tr>\
-                        <th v-for="h in tableHeader">{{h}}</th>\
-                    </tr>\
-                </thead>\
-                <tbody>\
-                    <tr v-for="r in tableRows" v-on:dblclick="uiEditThisEntry($index)"><td v-for="f in r">{{f}}</td></tr>\
-                </tbody>\
-            </table></div>'
-});
-
-Vue.component('c-table', cTable);
-
-
-
-
-
 // COMPONENT C-BUTTON ==================================================================
 
 var cButton = Vue.extend({
@@ -348,7 +190,7 @@ Vue.component('c-rating', cRating);
 
 var cAcInput=Vue.extend({
 
-    props:['mark', 'caption', 'wrap', 'datasource', 'domId'],
+    props:['mark', 'caption', 'wrap', 'datasource', 'domid'],
 
     data:function(){
         return ({
@@ -392,11 +234,11 @@ var cAcInput=Vue.extend({
 
         hideDropdown:function(){
             this.show_dd=false;
-            $('#'+this.domId).trigger('blur');            
+            $('#'+this.domid).trigger('blur');            
         },
 
         // ON KEYUP
-        uiChackAc:function(e){
+        uiCheckAc:function(e){
 
             var self=this;            
             var len;
@@ -419,7 +261,7 @@ var cAcInput=Vue.extend({
             } else if (this.txt.length>=2){
                 getResults(this.datasource,'json',{action:'getAutocomplete', string: this.txt}, function(res){
                     if (res.status=='ok'){
-                        self.autocomplete = res.geos;
+                        self.autocomplete = res.data;
                         self.showingAc=true;
                         self.uiShowDropdown();
                     }
@@ -432,15 +274,16 @@ var cAcInput=Vue.extend({
         // ON SELECT FROM DROPDOWN
         uiAcSelect:function(i){
             if (!this.showingAc){
-                this.txt=this.presets.list[i];
-                
+                this.txt=this.presets.list[i].name;
+                this.selectedValue = this.presets.list[i]
             } else {
                 this.txt=this.autocomplete[i].name;
+                this.selectedValue=this.autocomplete[i];
             }
             var self=this;
             Vue.nextTick(function(){
                 self.show_dd=false;
-                self.selectedValue=self.autocomplete[i];
+                //self.selectedValue=self.autocomplete[i];
                 self._submit();
             });
             
@@ -454,7 +297,9 @@ var cAcInput=Vue.extend({
             this.hideDropdown();
         },
         eSetPresets:function(e){
-            if (e.target==this.domId){
+            console.log('GOT IT');
+            if (e.target==this.domid){
+
                 this.presets=e.data;
             }
         },
@@ -477,7 +322,7 @@ var cAcInput=Vue.extend({
             this._submit()
         },
         eResetToDefaults:function(e){
-            if (e.target==this.domId){
+            if (e.target==this.domid){
                 this._reset();
                 this._submit();
             }
@@ -485,12 +330,12 @@ var cAcInput=Vue.extend({
     },
     
     template:'<div class="c-ac-input {{wrap}}">\
-                <label for="{{domId}}">{{caption}}</label> \
-                <input id="{{domId}}" class="form-control" v-bind:class="{\'has-dropdown\':show_dd}" type="text" v-on:click.stop="uiShowDropdown" v-model="txt"  v-on:focus="uiShowDropdown" v-on:keyup="uiChackAc"  /> \
+                <label for="{{domid}}">{{caption}}</label> \
+                <input id="{{domid}}" class="form-control" v-bind:class="{\'has-dropdown\':show_dd}" type="text" v-on:click.stop="uiShowDropdown" v-model="txt"  v-on:focus="uiShowDropdown" v-on:keyup="uiCheckAc"  /> \
                 <div v-show="show_dd" class="ac-dropdown" v-click-outside="eCustomClickOutside"> \
                     <div v-if="!showingAc">\
                         <div class="ac-dropdown-header">{{presets.title}}</div>\
-                        <div class="ac-dropdown-item" v-for="l in presets.list" v-on:click="uiAcSelect($index)"><span>{{l}}</span></div> \
+                        <div class="ac-dropdown-item" v-for="l in presets.list" v-on:click="uiAcSelect($index)"><span>{{l.name}}</span></div> \
                     </div>\
                     <div v-if="showingAc">\
                         <div class="ac-dropdown-item" v-for="l in autocomplete" v-bind:class="{\'ac-dropdown__item--preselected\':preSelected==$index}" v-on:click="uiAcSelect($index)"><span>{{l.name}}</span></div> \
@@ -509,7 +354,7 @@ Vue.component('c-ac-input', cAcInput);
 // COMPONENT C-CHECKBOX ==================================================================
 var cCheckbox=Vue.extend({
 
-    props:['cbtxt', 'mark', 'wrap', 'status'],
+    props:['cbtxt', 'mark', 'wrap', 'status', 'parent'],
 
     data:function(){
         return ({
@@ -519,6 +364,12 @@ var cCheckbox=Vue.extend({
     },
 
     methods:{
+        _submit:function(){
+            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent})
+        },
+        _reset:function(){
+            this.setStatus(this.status);
+        },
         toggle:function(){
             this.checked=!this.checked;
             if (this.checked){
@@ -537,10 +388,26 @@ var cCheckbox=Vue.extend({
                 this.msg="unchecked"
             }
             clicks[this.mark]=this.checked;
-        }
+        },
+
     },
     created: function(){
         this.setStatus(this.status)
+    },
+    events:{
+        'eSetValue':function(e){
+            if (e.target==this.mark){
+                this.setStatus(e.data);
+            }
+            this._submit();
+        },
+        'eResetAll':function(){
+            this._reset();
+            this._submit();
+        },
+        'eResetToDefaults':function(){
+            if (e.target==this.mark){ this._reset(); this._submit()}
+        }
     },
     
     template:'<div class="{{wrap}} c-checkbox" v-on:click="toggle">\
@@ -574,7 +441,13 @@ var cCbList = Vue.extend({
         this.dataList=dataSource[this.ds]
     },
     
-    template:'<div class="c-cb-list__select-all">select: <span class="plink" v-on:click="setAll(\'on\')">all</span> | <span class="plink" v-on:click="setAll(\'off\')">none</span></div></div><template v-for="cb in dataList" > <c-checkbox v-bind:cbtxt="cb.caption" v-bind:status="cb.status" v-bind:mark="cb.mark" ></c-checkbox></template>'
+    template:'<div class="c-cb-list__select-all">\
+                select: <span class="plink" v-on:click="setAll(\'on\')">all</span> | <span class="plink" v-on:click="setAll(\'off\')">none</span>\
+            </div>\
+                \
+            <template v-for="cb in dataList" >\
+            <c-checkbox v-bind:cbtxt="cb.caption" v-bind:status="cb.status" v-bind:mark="cb.mark" ></c-checkbox>\
+            </template>'
 });
 
 Vue.component('c-cb-list', cCbList);
@@ -763,4 +636,101 @@ Vue.component('c-grid', {
                 </tbody>\
               </table></div>'
 });
+
+//  COMPONENT C-ORDERED-LIST ================================================================================================
+
+var cOrderedList = Vue.extend({
+    props:['mark', 'wrap'],
+    data:function(){
+        return {
+            dataList:[],
+            textList:[]
+        }
+    },
+    methods:{
+        _submit:function(){
+            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue:this.dataList});
+        },
+        _reset:function(){
+            this.dataList=[];
+            this.textList=[];
+        },
+        dataToText:function(){
+            this.textList=[];
+            for (n=0; n<this.dataList.length; n++){
+                console.log(n);
+                //replace with callback
+                this.textList.push(this.dataList[n].text);
+            }
+            console.log(JSON.stringify(this.textList));
+        },
+        moveUp:function(i){
+            if (i>0){
+                var x=this.dataList[i-1];
+                this.dataList[i-1]=this.dataList[i];
+                this.dataList[i]=x;
+                this.dataToText();
+                this._submit();
+            }
+        },
+        moveDn:function(i){
+            var l=this.dataList.length;
+            if (i<l-1){
+                var x=this.dataList[i+1];
+                this.dataList[i+1]=this.dataList[i];
+                this.dataList[i]=x;
+                this.dataToText();
+                this._submit();
+            }
+        },
+        deleteItem:function(i){
+            this.dataList.splice(i,1);
+            this.dataToText();
+            this._submit();
+        }
+    },
+    created:function(){
+        this.dataToText();
+    },
+
+    events:{
+        'eAddNewPoint':function(e){
+            this.dataList.push(e.data);
+            this.dataToText();
+            this._submit();
+            console.log(JSON.stringify(this.dataList));
+        },
+        'eResetAll':function(){
+            this._reset();
+            this._submit();
+        },
+        'eResetToDefaults':function(e){
+            if (e.target==this.mark){
+                this._reset();
+                this._submit();
+            } 
+        },
+        eSetValue:function(e){
+            if (e.target==this.mark){
+                console.log('GOT THE EVENT');
+                this.dataList=e.data;
+                console.log(JSON.stringify(e.data));
+                this.dataToText();
+                this._submit();
+            }
+        }
+    },
+
+    template:'<table class="c-ordered-list">\
+                <tr class="c-ordered-list__item" v-for="item in textList" track-by="$index"><td>{{item}}</td>\
+                    <td class="c-ordered-list__item-cmdbar">\
+                        <span @click="moveUp($index)" class="glyphicon glyphicon-chevron-up"></span>\
+                        <span @click="moveDn($index)" class="glyphicon glyphicon-chevron-down"></span>\
+                        <span @click="deleteItem($index)">X</span>\
+                    </td>\
+                </tr>\
+            </table>'
+});
+
+Vue.component('c-ordered-list', cOrderedList);
 

@@ -20,8 +20,8 @@
                 </div>
                 <!-- <div class="divider"></div> -->
                 <div class="section-body">
-                    <c-ac-input caption="Starting from" mark="start-place" wrap="column-item"></c-ac-input>
-                    <c-ac-input caption="Finishing at" mark="finish-place" wrap="column-item"></c-ac-input>
+                    <c-ac-input caption="Starting from" :mark="['startID','startName']" wrap="column-item" domid="startpoint" datasource="/"></c-ac-input>
+                    <c-ac-input caption="Finishing at" :mark="['finishID','finishName']" wrap="column-item" domid="finishpoint" datasource="/"></c-ac-input>
 
                     <c-duration></c-duration>
 

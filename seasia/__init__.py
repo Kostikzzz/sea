@@ -16,6 +16,7 @@ from .config import DEBUG, SECRET_KEY, DBURI, MAINTENANCE, PROJECT_NAME, MAIL_SE
 from .social import social, oauth
 from .social.models import User
 from .admin import admin
+from .models import Point
 
 # from .mailer import mail
 
@@ -108,10 +109,21 @@ def maintenance():
 
 
 # for example
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def root():
-    #users = User.query.all()
-    return render_template('root_example.html')
+    if (request.method)=='GET':
+        return render_template('root_example.html')
+    elif (request.method)=='POST':
+        q=request.json
+        if q['action']=='getAutocomplete':
+            points=Point.query.filter(Point.pointName.startswith(q['string']), Point.starter==True)
+            res={}
+            res['data']=[]
+            for p in points:
+                res['data'].append({"id":p.id, "name":p.pointName})
+            res['status']='ok'
+        return json.dumps(res)
+
 
 
 @app.template_filter('nl2br')

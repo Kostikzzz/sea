@@ -1,34 +1,3 @@
-var formOpCaption = {'add':'Add new point','edit':'Edit point'};
-var form = [
-    {group:1,col:4, elements:[
-        {mark: ['geoId','geoName'], type:'ac-input'},
-        {mark: 'pointName', type:'input', default:""}
-        ]
-    },
-    {group:2,col:4, elements:[
-        {mark: 'rtBch', type:'rating'},
-        {mark: 'rtHst', type:'rating'},
-        {mark: 'rtNat', type:'rating'},
-        {mark: 'rtDiv', type:'rating'},
-        {mark: 'rtShp', type:'rating'},
-        {mark: 'rtKid', type:'rating'},
-        {mark: 'rtClt', type:'rating'},
-        {mark: 'rtFod', type:'rating'},
-        {mark: 'rtNlf', type:'rating'}
-        ]
-    },
-    {group:3,col:4, elements:[
-        {mark: 'pointPop', type:'input', default:"1"},
-        {mark: 'absMin', type:'input', default:"0"},
-        {mark: 'recMin', type:'input', default:"0"},
-        {mark: 'recMax', type:'input', default:"0"},
-        {mark: 'absMax', type:'input', default:"0"}
-        ]
-    }
-];
-
-var dataSource = '/adminka';
-
 
 
 //  VUE INCTANCE ==============================================================================================================
@@ -62,6 +31,8 @@ var adminRoot = new Vue({
                                     <c-ac-input v-if="e.type==\'ac-input\'" :mark="e.mark" :caption="e.mark" :datasource="this.dataSource"></c-ac-input>\
                                     <c-input v-if="e.type==\'input\'" :mark="e.mark" :caption="e.mark" :default="e.default"></c-input>\
                                     <c-rating v-if="e.type==\'rating\'" :mark="e.mark" :caption="e.mark"></c-rating>\
+                                    <c-ordered-list v-if="e.type==\'ordered-list\'" :mark="e.mark" :caption="e.mark"></c-ordered-list>\
+                                    <c-button v-if="e.type==\'button\'" :mark="e.mark" :generate="e.generate">{{e.caption}}</c-button>\
                                 </template>\
                             </div>\
                         </template>\
@@ -164,7 +135,14 @@ var adminRoot = new Vue({
             }
             
             //alert();
+            console.log("UPDATE FORM DATA EVENT");
             console.log(JSON.stringify(this.formData));
+        },
+
+        // route specific
+        eAddNewPointClick:function(e){
+            this.$broadcast('eAddNewPoint', {data:{text:this.formData.addPointName,id:this.formData.addPointId}});
         }
     }
 });
+

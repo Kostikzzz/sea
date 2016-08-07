@@ -20,16 +20,26 @@ var dataSource={
         {caption:'Malaysia', status:'on', mark:'malaysia'},
         {caption:'Singapore', status:'on', mark:'singapore'},
         {caption:'Indonesia', status:'on', mark:'indonesia'}
+    ],
+    presetsList:[
+        {id:12, name: 'Bangkok'},
+        {id:13, name: 'Siem Reap'},
+        {id:19, name: 'Hanoi'},
+        {id:32, name: 'Ho Chi Minh'},
+        {id:28, name: 'Phnom Penh'},
+        {id:29, name: 'Singapore'},
+        {id:51, name: 'Phuket'},
+
     ]
 };
-
-
-
 
 //===============================
 
 new Vue ({
     el:'body',
+    data:{
+        formData:{}
+    },
     ready:function(){
         this.$broadcast('setDefaults',{target:'start-place', data:{
             title:'Most popular:',
@@ -41,5 +51,23 @@ new Vue ({
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
             }
         });
+
+        this.$broadcast('eSetPresets',{target:'startpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
+        this.$broadcast('eSetPresets',{target:'finishpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
+    },
+    events:{
+        eUpdateFormData:function(e){
+            var self = this;
+            if(Array.isArray(e)){
+                console.log('Got array!');
+                e.forEach(function(v){
+                    self.formData[v.mark]=v.cvalue;
+                });
+            } else {
+                this.formData[e.mark]=e.cvalue;
+            }
+            console.log(JSON.stringify(this.formData))
+        
+        }
     }
 });

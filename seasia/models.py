@@ -13,6 +13,7 @@ class Geo(db.Model):
     google_place_id=db.Column(db.String(50) )
     point = db.relationship('Point', backref='geo', lazy='dynamic')
 
+
 class Country(db.Model):
     __tablename__='countries'
     id = db.Column(db.Integer, primary_key = True)
@@ -41,28 +42,52 @@ class Point(db.Model):
     rtShp = db.Column(db.Integer)
     rtKid = db.Column(db.Integer)
     rtNlf = db.Column(db.Integer)
+    starter = db.Column(db.Boolean, default = False)
 
-    def fields(self):
+    # ADMIN
+
+    def fields():
         return ['id','pointName','geoName','geoId','pointPop','absMin','absMax','recMin','recMax', 'rtKid','rtShp','rtFod','rtDiv','rtNat','rtClt','rtHst','rtBch','rtNlf']
 
     def getDict(self):
         res={}
-        for f in self.fields():
+        for f in Point.fields():
             res[f]=getattr(self, f)
         return res
 
     def getList(self):
         res=[]
-        for f in self.fields():
+        for f in Point.fields():
             res.append({"mark":f,"data":getattr(self,f)})
         return res
 
 
 
-class Superroute(db.Model):
-    __tablename__='superroutes'
+class Route(db.Model):
+    __tablename__='routes'
     id = db.Column(db.Integer, primary_key = True)
     name=db.Column(db.String(100))
-    data=db.Column(db.Text)
-    start_point=db.Column(db.Integer, db.ForeignKey('points.id'))
-    end_point=db.Column(db.Integer, db.ForeignKey('points.id'))
+    routeData=db.Column(db.Text)
+    startPointId=db.Column(db.Integer, db.ForeignKey('points.id'))
+    endPointId=db.Column(db.Integer, db.ForeignKey('points.id'))
+    startPointName = db.Column(db.String(50))
+    endPointName = db.Column(db.String(50))
+
+    def fields():
+        return ['id','name','startPointName','endPointName','routeData','startPointId','endPointId']
+
+    def getDict(self):
+        res={}
+        for f in Route.fields():
+            res[f]=getattr(self, f)
+        return res
+
+    def getList(self):
+        res=[]
+        for f in Route.fields():
+            res.append({"mark":f,"data":getattr(self,f)})
+        return res
+
+
+
+
