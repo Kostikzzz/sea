@@ -22,8 +22,7 @@
                 <div class="section-body">
                     <c-ac-input caption="Starting from" :mark="['startID','startName']" wrap="column-item" domid="startpoint" datasource="/"></c-ac-input>
                     <c-ac-input caption="Finishing at" :mark="['finishID','finishName']" wrap="column-item" domid="finishpoint" datasource="/"></c-ac-input>
-
-                    <c-duration></c-duration>
+                    <c-duration mark="duration" :def="[14,'days']"></c-duration>
 
                 </div>
             </section>
@@ -34,9 +33,9 @@
                 <div class="section-body">
                 <!-- <div class="divider"></div> -->
                 <h3>Pace</h3>
-                    <c-dual-toggle wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle>                
+                    <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle>                
                     <h3>Activities</h3> 
-                    <c-cb-list ds="activities"></c-cb-list>
+                    <c-cb-list mark="activitiesGroup"></c-cb-list>
                 </div>
             </section>
             <section>
@@ -46,7 +45,7 @@
                 <!-- <div class="divider"></div> -->
                 <div class="section-body">
                     <h3>Countries</h3>
-                        <c-cb-list ds="countries"></c-cb-list>
+                        <c-cb-list mark="countriesGroup"></c-cb-list>
                 </div>
             </section>
         </div>

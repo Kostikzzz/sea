@@ -365,7 +365,7 @@ var cCheckbox=Vue.extend({
 
     methods:{
         _submit:function(){
-            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent})
+            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark})
         },
         _reset:function(){
             this.setStatus(this.status);
@@ -378,6 +378,7 @@ var cCheckbox=Vue.extend({
                 this.msg = 'unchecked'
             }
             clicks[this.mark]=this.checked;
+            this._submit();
         },
         setStatus:function(s){
             if (s=='on'){
@@ -388,6 +389,7 @@ var cCheckbox=Vue.extend({
                 this.msg="unchecked"
             }
             clicks[this.mark]=this.checked;
+            this._submit();
         },
 
     },
@@ -423,31 +425,53 @@ Vue.component('c-checkbox', cCheckbox);
 var cCbList = Vue.extend({
     data: function(){
         return {
-            dataList:[]
+            dataList:[],
+            groupData:{}
         }
     },
     methods:{
-        loadDataSource:function(){
-            list=dataSource[ds]
+        _submit:function(){
+            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue:this.groupData, parent:this.parent})
         },
-        setAll: function(s){
-            for (var i=0; i<this.$children.length; i++){
-                this.$children[i].setStatus(s);
+        setAllValues: function(){
+            var self = this;
+            this.dataList.forEach(function(d){
+                self.$broadcast('eSetValue',{target:d.mark, data:d.status});
+            });
+        },
+        setAllTo:function(v){
+            var self = this;
+            this.dataList.forEach(function(d){
+                d.status=v;
+            });
+            this.setAllValues();
+        }
+    },
+    props:['mark', 'wrap', 'parent'],
+    events:{
+        'eSetValue':function(e){
+            if(e.target==this.mark){
+                this.dataList=e.data;
+                this.setAllValues();
+                this._submit();
+            }
+        },
+        'eUpdateFormData':function(e){
+            if (e.parent==this.mark){
+                this.groupData[e.mark] = e.cvalue;
+                console.log(JSON.stringify(this.groupData));
+                this._submit();
             }
         }
     },
-    props:['ds'],
-    created: function(){
-        this.dataList=dataSource[this.ds]
-    },
     
-    template:'<div class="c-cb-list__select-all">\
-                select: <span class="plink" v-on:click="setAll(\'on\')">all</span> | <span class="plink" v-on:click="setAll(\'off\')">none</span>\
+    template:'<div class="c-cb-list {{wrap}}"><div class="c-cb-list__select-all">\
+                select: <span class="plink" v-on:click="setAllTo(\'on\')">all</span> | <span class="plink" v-on:click="setAllTo(\'off\')">none</span>\
             </div>\
                 \
             <template v-for="cb in dataList" >\
-            <c-checkbox v-bind:cbtxt="cb.caption" v-bind:status="cb.status" v-bind:mark="cb.mark" ></c-checkbox>\
-            </template>'
+            <c-checkbox v-bind:cbtxt="cb.caption" v-bind:status="cb.status" v-bind:mark="cb.mark" :parent="mark"></c-checkbox>\
+            </template></div>'
 });
 
 Vue.component('c-cb-list', cCbList);
@@ -458,6 +482,9 @@ Vue.component('c-cb-list', cCbList);
 // COMPONENT C-DURATION ==================================================================
 
 var cDuration = Vue.extend({
+
+// C-DURATION -- PARAMS . . . . . . . . . . . . . . . . . . . . . . . . . . 
+    props:['wrap', 'def', 'mark'],
 
     // C-DURATION -- DATA . . . . . . . . . . . . . . . . . . . . . . . . . . 
     data: function(){
@@ -473,11 +500,27 @@ var cDuration = Vue.extend({
 
     // C-DURATION -- METHODS . . . . . . . . . . . . . . . . . . . . . . . . . . 
     methods:{
+        _reset:function(){
+            console.log('reseting '+this.mark);
+            if (this.def != undefined){
+                this.number=this.def[0];
+                this.measure=this.def[1];
+            }
+            else{
+                this.number=7;
+                this.measure='days'
+            }
+        },
+        _submit:function(){
+            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue: this.measure=='days' ? this.number : this.number*7})
+        },
         inc: function(){
             this.number++;
+            this._submit();
         },
         dec:function(){
             this.number--;
+            this._submit();
         },
         setDays:function(){
             if (this.measure=='weeks'){
@@ -487,6 +530,7 @@ var cDuration = Vue.extend({
                 this.weeksToggle='';
                 this.number=this.oldDaysNumber;
             }
+            this._submit();
         },
         setWeeks:function(){
             if (this.measure=='days'){
@@ -496,12 +540,15 @@ var cDuration = Vue.extend({
                 this.weeksToggle='c-duration__selected';
                 this.number=this.oldWeeksNumber;
             }
-
+            this._submit();
         }
     },
 
-    // C-DURATION -- PARAMS . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    params:['wrap'],
+    // C-DURATION -- CREATED . . . . . . . . . . . . . . . . . . . . . . . . . . 
+    created:function(){
+        this._reset();
+        this._submit();
+    },
 
     // C-DURATION -- TEMPLATE . . . . . . . . . . . . . . . . . . . . . . . . . . 
     template:'<div class="c-duration {{wrap}}"><label for="days-count" >Duration</label> \
@@ -534,22 +581,35 @@ var cDualToggle=Vue.extend({
 
     // C-DUAL-TOGGLE -- PROPS . . . . . . . . . . . . . . . . . . . . . . . . . . 
     props: ['caption1','caption2', 'mark', 'status', 'wrap'],
-
+    data:function(){
+        return{
+            state:0,
+            opt1:'',
+            opt2:''
+        }
+    },
     methods: {
+        _submit:function(){
+            this.$dispatch('eUpdateFormData', {mark:this.mark, cvalue:this.state});
+        },
         selectOpt:function(v){
             if (v=="0"){
                 this.opt1='c-dual-toggle__selected';
                 this.opt2='';
+                this.state=0;
             } else if (v=="1"){
                 this.opt1='';
                 this.opt2='c-dual-toggle__selected';
+                this.state=1;
             }
+            this._submit();
         }
     },
 
     // C-DUAL-TOGGLE -- CREATED . . . . . . . . . . . . . . . . . . . . . . . . . . 
     created:function(){
-        this.selectOpt(this.status);
+        if (this.status!=undefined){this.selectOpt(this.status)}
+        else {this.selectOpt("0")}
     },
     template:'<div class="c-dual-toggle {{wrap}}">\
                 <span class="c-dual-toggle__option c-dual-toggle__left-option" v-on:click="selectOpt(0)" v-bind:class="[opt1]">{{caption1}}</span>\

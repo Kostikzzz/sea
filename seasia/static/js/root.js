@@ -51,7 +51,8 @@ new Vue ({
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
             }
         });
-
+        this.$broadcast('eSetValue',{target:'activitiesGroup', data: dataSource.activities});
+        this.$broadcast('eSetValue',{target:'countriesGroup', data: dataSource.countries});
         this.$broadcast('eSetPresets',{target:'startpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
         this.$broadcast('eSetPresets',{target:'finishpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
     },
@@ -66,6 +67,7 @@ new Vue ({
             } else {
                 this.formData[e.mark]=e.cvalue;
             }
+            console.log('>>>>>');
             console.log(JSON.stringify(this.formData))
         
         }
