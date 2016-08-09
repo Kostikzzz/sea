@@ -23,14 +23,16 @@
         <div class="col-lg-3">
 
         <section id="avatar__dropzone" class="dropzone">
-                    <img class="avatar-big" id="avatar__image" src="{{u.get_avatar()}}"/>
-          <div id="dnd-cta">Перетащите новое фото сюда</div>
-          <div id="or">-или-</div>
-          <div class="browser">
-            <label>
-              <span>Выберите файл</span>
-              <input type="file" name="files[]" multiple="multiple" title='Click to add Files'>
-            </label>
+          <div class="section-body">
+            <img class="avatar-big" id="avatar__image" src="{{u.get_avatar()}}"/>
+            <div id="dnd-cta">Перетащите новое фото сюда</div>
+            <div id="or">-или-</div>
+            <div class="browser">
+              <label>
+                <span>Выберите файл</span>
+                <input type="file" name="files[]" multiple="multiple" title='Click to add Files'>
+              </label>
+            </div>
           </div>
         </section>
 
@@ -39,6 +41,7 @@
 
         <div class="col-lg-9">
             <section id="userinfo">
+              <div class="section-body">
                 <h1 id="nickname__title">{{u.nickname}}</h1>
                 <div class="divider"></div>
 
@@ -63,15 +66,17 @@
                 </div>
                 <div id="email__status"></div>
 
-                
+                </div>
             </section>
             <section>
+              <div class="section-body">
                 <h2>Авторизация</h2>
                 {% if u.google_id %}
                     Вы вошли с помощью Google
                 {% endif %}
                 <div class="divider"></div>
                 <a class="btn btn-large btn-warning" href="{{url_for('social.logout')}}"><i class="fa fa-sign-out" title="Выйти"></i>&nbsp;Выйти</a>
+              </div>
             </section>
         </div>
 

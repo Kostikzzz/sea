@@ -4,12 +4,13 @@ var clicks={};
 var dataSource={
     testcb:[{caption:'QWertu', status:'on'},{caption:'fsese', status:'off'}],
     activities: [
-        {caption:'Beach', status:'off', mark:'beach'},
-        {caption:'Nature', status:'off', mark:'nature'},
-        {caption:'History', status:'off', mark:'history'},
-        {caption:'Culture', status:'off', mark:'culture'},
-        {caption:'Food', status:'off', mark:'food'},
-        {caption:'Diving', status:'off', mark:'diving'}
+        {caption:'Beach', status:'off', mark:'rtBch'},
+        {caption:'Nature', status:'off', mark:'rtNat'},
+        {caption:'History', status:'off', mark:'rtHst'},
+        {caption:'Culture', status:'off', mark:'rtClt'},
+        {caption:'Food', status:'off', mark:'rtFod'},
+        {caption:'Kids', status:'off', mark:'rtKid'},
+        {caption:'Nightlife', status:'off', mark:'rtNlf'}
     ],
     countries:[
         {caption:'Thailand', status:'on', mark:'thailand'},
@@ -25,7 +26,7 @@ var dataSource={
         {id:12, name: 'Bangkok'},
         {id:13, name: 'Siem Reap'},
         {id:19, name: 'Hanoi'},
-        {id:32, name: 'Ho Chi Minh'},
+        {id:23, name: 'Ho Chi Minh'},
         {id:28, name: 'Phnom Penh'},
         {id:29, name: 'Singapore'},
         {id:51, name: 'Phuket'},
@@ -38,7 +39,19 @@ var dataSource={
 new Vue ({
     el:'body',
     data:{
-        formData:{}
+        formData:{},
+        results:['f',3]
+    },
+    methods:{
+        loadResults:function(){
+            var self = this;
+            getResults('/', 'json', {action:'loadResults', data:this.formData}, function(res){
+                if (res.status=='ok'){
+                    console.log(JSON.stringify(res.results));
+                    self.results=res.results;
+                }
+            });
+        }
     },
     ready:function(){
         this.$broadcast('setDefaults',{target:'start-place', data:{
@@ -68,7 +81,9 @@ new Vue ({
                 this.formData[e.mark]=e.cvalue;
             }
             console.log('>>>>>');
-            console.log(JSON.stringify(this.formData))
+            console.log(JSON.stringify(this.formData));
+
+            this.loadResults();
         
         }
     }

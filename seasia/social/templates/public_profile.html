@@ -17,7 +17,9 @@
         <div class="col-lg-3">
 
         <section id="avatar">
+          <div class="section-body">
               <img class="avatar-big" id="avatar__image" src="{{u.get_avatar()}}"/>
+            </div>
         </section>
 
 
@@ -25,6 +27,7 @@
 
         <div class="col-lg-5">
             <section id="userinfo">
+              <div class="section-body">
                 <h1 id="nickname__title">{{u.nickname}}</h1>
                 <div class="divider"></div>
                 {% if current_user.id!= u.id %}
@@ -41,7 +44,7 @@
                   <div id="private-message__status" class="alert alert-success">Ваше сообщение успешно отправлено!<br/>Всю переписку вы можете посмотреть в вашем профиле, в разделе <a href="{{url_for('social.messenger')}}"> "Личные сообщения"</a></div>
                 </div>
                 {% endif %}
-                
+                </div>
             </section>
         </div>
       </div>

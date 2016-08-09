@@ -29,7 +29,7 @@ var cButton = Vue.extend({
     props:['mark', 'generate', 'wrap'],
     methods:{
         emitEvent:function(){
-            this.$dispatch(this.generate, {emitter:this.mark})
+            this.$dispatch(this.generate, {emitter:this.mark});
         }
     },
     template:'<button class="c-button btn {{wrap}}" v-on:click="emitEvent"><slot></slot></button>'
@@ -43,10 +43,10 @@ Vue.component('c-button',cButton);
 var cInput = Vue.extend({
 
     props:{
-        'mark':String, 
-        'caption':String, 
-        'wrap':String, 
-        'size':Number, 
+        'mark':String,
+        'caption':String,
+        'wrap':String,
+        'size':Number,
         'max':Number,
         'default':[String, Number]
     },
@@ -54,7 +54,7 @@ var cInput = Vue.extend({
     data:function(){
         return {
             text:''
-        }
+        };
     },
 
     methods:{
@@ -89,7 +89,7 @@ var cInput = Vue.extend({
                 this.text = e.data;
                 this._submit();
             }
-        },        
+        },
         eResetToDefaults:function(e){
             if (e.target==this.mark){
                 this._reset();
@@ -121,7 +121,7 @@ var cRating=Vue.extend({
     data:function(){
         return {
             rating: 0
-        }
+        };
     },
 
     methods:{
@@ -133,7 +133,7 @@ var cRating=Vue.extend({
         _reset:function(){
             console.log('rating reset');
             if (this.default){
-                this.rating = parseInt(this.Default);
+                this.rating = parseInt(this.Default, 10);
             }
             else{
                 this.rating = 0;
@@ -157,7 +157,7 @@ var cRating=Vue.extend({
         eSetValue:function(e){
             if (e.target==this.mark) this.rating = e.data;
             Vue.nextTick(this._submit);
-        }, 
+        },
         eResetAll:function(){
             this._reset();
             this._submit();
@@ -228,21 +228,21 @@ var cAcInput=Vue.extend({
         // DROPDOWN SHOW-HIDE
         uiShowDropdown:function(){
             if ( (this.showingAc && this.autocomplete.length>0) || (!this.showingAc && this.presets.list.length>0) ){
-               this.show_dd=true; 
-            } 
+               this.show_dd=true;
+            }
         },
 
         hideDropdown:function(){
             this.show_dd=false;
-            $('#'+this.domid).trigger('blur');            
+            $('#'+this.domid).trigger('blur');
         },
 
         // ON KEYUP
         uiCheckAc:function(e){
 
-            var self=this;            
+            var self=this;
             var len;
-            this.showingAc ? len = this.autocomplete.length : len = this.presets.list.length;
+            len = this.showingAc ? this.autocomplete.length : this.presets.list.length;
             if (e.keyCode==13){
                 if(this.preSelected==-1){
                     this._submit();
@@ -255,9 +255,11 @@ var cAcInput=Vue.extend({
             } else if (e.keyCode==40){
                 this.preSelected++;
                 this.preSelected>=len ? this.preSelected=0 : true;
+                //this.preSelected = this.preSelected >= len ? 0 : true;
             } else if (e.keyCode==38){
                 this.preSelected--;
                 this.preSelected<0 ? this.preSelected=len-1 : true;
+                //this.preSelected = this.preSelected<0 ? len-1 : true;
             } else if (this.txt.length>=2){
                 getResults(this.datasource,'json',{action:'getAutocomplete', string: this.txt}, function(res){
                     if (res.status=='ok'){
