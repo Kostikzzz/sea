@@ -14,15 +14,16 @@
 
         <div class="col-lg-3">
             <section>
-
                 <div class="section-header">
                     <h2>Your trip</h2>
                 </div>
                 <!-- <div class="divider"></div> -->
                 <div class="section-body">
-                    <c-ac-input caption="Starting from" :mark="['startID','startName']" wrap="column-item" domid="startpoint" datasource="/"></c-ac-input>
-                    <c-ac-input caption="Finishing at" :mark="['finishID','finishName']" wrap="column-item" domid="finishpoint" datasource="/"></c-ac-input>
+                    <h3>Trip duration</h3>
                     <c-duration mark="duration" :def="[14,'days']" min="5"></c-duration>
+
+                    <h3>Pace</h3>
+                    <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle> 
 
                 </div>
             </section>
@@ -32,22 +33,12 @@
                 </div>
                 <div class="section-body">
                 <!-- <div class="divider"></div> -->
-                <h3>Pace</h3>
-                    <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle>                
+                               
                     <h3>Activities</h3> 
                     <c-cb-list mark="activitiesGroup"></c-cb-list>
                 </div>
             </section>
-            <section>
-                <div class="section-header">
-                    <h2>Filters</h2>
-                </div>
-                <!-- <div class="divider"></div> -->
-                <div class="section-body">
-                    <h3>Countries</h3>
-                        <c-cb-list mark="countriesGroup"></c-cb-list>
-                </div>
-            </section>
+
         </div>
         <div class="col-lg-6">
             <div v-for="r in results" v-if="results.length>0">
@@ -59,7 +50,18 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3"></div>
+        <div class="col-lg-3">
+            <section>
+                <div class="section-header">
+                    <h2>Filters</h2>
+                </div>
+                <!-- <div class="divider"></div> -->
+                <div class="section-body">
+                    <h3>Countries</h3>
+                        <c-cb-list mark="countriesGroup"></c-cb-list>
+                </div>
+            </section>
+        </div>
         
 
     </div>

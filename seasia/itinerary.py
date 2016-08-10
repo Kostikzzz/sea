@@ -16,7 +16,7 @@ class Itinerary():
             add = 1
 
             if p['cur'] == 0:
-                add = p['rmn']
+                add = p['min']
 
             if p['cur']+add < p[limit] and add <= self.fn and p[factor] > best_pop:
                 best_pop = p[factor]
@@ -37,7 +37,10 @@ class Itinerary():
         self.points = json.loads(sr.routeData)
         print ('NEW ===============================')
         for p in self.points:
-            p['cur'] = 0
+            if "must" in p:
+                p['cur']=p['must']
+            else:
+                p['cur'] = 0
             dbp = Point.query.get(p['id'])
             p['pop'] = dbp.pointPop
             p['min'] = dbp.absMin
@@ -47,7 +50,6 @@ class Itinerary():
             for c in self.categories:
                 p[c] = getattr(dbp, c)
 
-            print (q['activitiesGroup'])
             for key, val in q['activitiesGroup'].items():
                 if val:
                     p['pop'] += p[key]
@@ -60,16 +62,17 @@ class Itinerary():
         for c in self.categories:
             if c in q['activitiesGroup'] and q['activitiesGroup'][c] is True:
                 print('=========')
-                self.addToBest(c, 'rmn')
+                self.addToBest(c, 'rmx')
                 print('=========')
 
 
+        if 'pace' in q and q['pace']==1:
+            print ('1st pass')
+            res = True
+            while self.fn > 0 and res is True:
+                print ('fn: %d' % self.fn)
+                res = self.addToBest('pop', 'rmn')
 
-        print ('1st pass')
-        res = True
-        while self.fn > 0 and res is True:
-            print ('fn: %d' % self.fn)
-            res = self.addToBest('pop', 'rmn')
         print ('2nd pass')
         res = True
         while self.fn > 0 and res is True:

@@ -53,12 +53,14 @@ new Vue ({
                 if (res.status=='ok'){
                     //console.log(JSON.stringify(res.results));
                     self.results=res.results;
+                } else if (res.status=='unknown'){
+                    alert('Status unknown. Action '+res.action);
                 }
             });
         }
     },
     ready:function(){
-        setTimeout(function(){location.reload()},1000*60*30);
+        //setTimeout(function(){location.reload()},1000*60*30);
         this.$broadcast('setDefaults',{target:'start-place', data:{
             title:'Most popular:',
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
@@ -85,11 +87,24 @@ new Vue ({
             } else {
                 this.formData[e.mark]=e.cvalue;
             }
-            console.log('>>>>>');
-            console.log(JSON.stringify(this.formData));
 
             this.loadResults();
-        
+        },
+        eInitFormData:function(e){
+            var self = this;
+            if(Array.isArray(e)){
+                console.log('Got array!');
+                e.forEach(function(v){
+                    self.formData[v.mark]=v.cvalue;
+                });
+            } else {
+                this.formData[e.mark]=e.cvalue;
+            }
+            //console.log('FD LENGTH: '+Object.keys(this.formData).length);
+            if (Object.keys(this.formData).length>=19){
+                this.loadResults();
+            }
+            
         }
     }
 });

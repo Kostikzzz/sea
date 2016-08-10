@@ -11,6 +11,8 @@ $.ajaxSetup({
 })
 
 function getResults(route, resultType, formData, callback){
+    console.log('requesting '+route);
+    console.log('formdata: '+JSON.stringify(formData));
 	$.ajax(route,{
 		type: 'post',
 		data: JSON.stringify(formData, null, '\t'),

@@ -1,22 +1,4 @@
-/*
-Vue.directive('click-outside', {
-  bind () {
-    let self  = this
-    this.event = function (event) { 
-      self.vm.$emit(self.expression, event) 
-    }
-    this.el.addEventListener('click', this.stopProp)
-    document.body.addEventListener('click', this.event)
-  },
 
-  unbind() {
-    this.el.removeEventListener('click', this.stopProp)
-    document.body.removeEventListener('click', this.event)
-  },
-
-  stopProp(event) { event.stopPropagation() }
-})
-*/
 
 Vue.directive('click-outside', {
     bind:function() {
@@ -84,6 +66,10 @@ var cInput = Vue.extend({
         _submit:function(){
             this.$dispatch('eUpdateFormData',{'mark':this.mark, cvalue:this.text });
         },
+
+        _init:function(){
+            this.$dispatch('eInitFormData',{'mark':this.mark, cvalue:this.text });
+        },
         _reset:function(){
             if (this.default){
                 this.text=this.default;
@@ -100,7 +86,7 @@ var cInput = Vue.extend({
 
     created:function(){
         this._reset();
-
+        this._init();
     },
 
     events:{
@@ -108,19 +94,19 @@ var cInput = Vue.extend({
         eSetValue:function(e){
             if (e.target==this.mark){
                 this.text = e.data;
-                this._submit();
+                this._init();
             }
         },
         eResetToDefaults:function(e){
             if (e.target==this.mark){
                 this._reset();
-                this._submit();
+                this._init();
             }
             
         },
         eResetAll:function(){
             this._reset();
-            this._submit();
+            this._init();
         }
 
     },
@@ -151,6 +137,10 @@ var cRating=Vue.extend({
             this.$dispatch('eUpdateFormData',{'mark':this.mark, cvalue:this.rating });
         },
 
+        _init:function(){
+            this.$dispatch('eInitFormData',{'mark':this.mark, cvalue:this.rating });
+        },
+
         _reset:function(){
             console.log('rating reset');
             if (this.default){
@@ -172,16 +162,17 @@ var cRating=Vue.extend({
 
     created:function(){
         this._reset();
+        this._init();
     },
 
     events:{
         eSetValue:function(e){
             if (e.target==this.mark) this.rating = e.data;
-            Vue.nextTick(this._submit);
+            Vue.nextTick(this._init);
         },
         eResetAll:function(){
             this._reset();
-            this._submit();
+            this._init();
             /*if (this.default){
                 this.rating=parseInt(this.default);
             } else {
@@ -233,6 +224,10 @@ var cAcInput=Vue.extend({
             this.hideDropdown();
             this.selectedValue.text=this.txt;//EXACT TEXT INPUT VALUE - NOT SENT!!!
             this.$dispatch('eUpdateFormData',[{'mark':this.mark[0], cvalue:this.selectedValue.id},{'mark':this.mark[1], cvalue:this.selectedValue.name}]);
+        },
+
+        _init:function(){
+            this.$dispatch('eInitFormData',[{'mark':this.mark[0], cvalue:this.selectedValue.id},{'mark':this.mark[1], cvalue:this.selectedValue.name}]);
         },
 
         _reset:function(){
@@ -314,6 +309,10 @@ var cAcInput=Vue.extend({
 
     },
 
+    created:function(){
+        this._init();
+    },
+
     events:{
         // CUSTOM EVENT FOR CLICK OUTSIDE
         eCustomClickOutside:function(){
@@ -337,17 +336,17 @@ var cAcInput=Vue.extend({
                     console.log('caught NAME '+e.data);
                     this.txt = e.data;
                 }
-                this._submit();
+                this._init();
             }
         }, 
         eResetAll:function(){
             this._reset();
-            this._submit()
+            this._init()
         },
         eResetToDefaults:function(e){
             if (e.target==this.domid){
                 this._reset();
-                this._submit();
+                this._init();
             }
         }
     },
@@ -390,6 +389,10 @@ var cCheckbox=Vue.extend({
         _submit:function(){
             this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark})
         },
+
+        _init:function(){
+            this.$dispatch('eInitFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark})
+        },
         _reset:function(){
             this.setStatus(this.status);
         },
@@ -417,21 +420,22 @@ var cCheckbox=Vue.extend({
 
     },
     created: function(){
-        this.setStatus(this.status)
+        this.setStatus(this.status);
+        this._init();
     },
     events:{
         'eSetValue':function(e){
             if (e.target==this.mark){
                 this.setStatus(e.data);
             }
-            this._submit();
+            this._init();
         },
         'eResetAll':function(){
             this._reset();
-            this._submit();
+            this._init();
         },
         'eResetToDefaults':function(){
-            if (e.target==this.mark){ this._reset(); this._submit()}
+            if (e.target==this.mark){ this._reset(); this._init()}
         }
     },
     
@@ -456,6 +460,9 @@ var cCbList = Vue.extend({
         _submit:function(){
             this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue:this.groupData, parent:this.parent})
         },
+        _init:function(){
+            this.$dispatch('eInitFormData',{mark:this.mark, cvalue:this.groupData, parent:this.parent})
+        },
         setAllValues: function(){
             var self = this;
             this.dataList.forEach(function(d){
@@ -476,14 +483,14 @@ var cCbList = Vue.extend({
             if(e.target==this.mark){
                 this.dataList=e.data;
                 this.setAllValues();
-                this._submit();
+                this._init();
             }
         },
         'eUpdateFormData':function(e){
             if (e.parent==this.mark){
                 this.groupData[e.mark] = e.cvalue;
                 console.log(JSON.stringify(this.groupData));
-                this._submit();
+                this._init();
             }
         }
     },
@@ -537,6 +544,10 @@ var cDuration = Vue.extend({
         _submit:function(){
             this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue: this.measure=='days' ? this.number : this.number*7})
         },
+
+        _init:function(){
+            this.$dispatch('eInitFormData',{mark:this.mark, cvalue: this.measure=='days' ? this.number : this.number*7})
+        },
         inc: function(){
             this.number++;
             this._submit();
@@ -545,7 +556,6 @@ var cDuration = Vue.extend({
             if (this.min && this.number>this.min){
                 this.number--;
             }
-            
             this._submit();
         },
         setDays:function(){
@@ -573,7 +583,7 @@ var cDuration = Vue.extend({
     // C-DURATION -- CREATED . . . . . . . . . . . . . . . . . . . . . . . . . . 
     created:function(){
         this._reset();
-        this._submit();
+        this._init();
     },
 
     // C-DURATION -- TEMPLATE . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -601,7 +611,8 @@ var cDualToggle=Vue.extend({
     data: function(){
         return {
             opt1:'c-dual-toggle__selected',
-            opt2:''
+            opt2:'',
+            initialized:false
         }
     },
 
@@ -618,6 +629,9 @@ var cDualToggle=Vue.extend({
         _submit:function(){
             this.$dispatch('eUpdateFormData', {mark:this.mark, cvalue:this.state});
         },
+        _init:function(){
+            this.$dispatch('eInitFormData', {mark:this.mark, cvalue:this.state});
+        },
         selectOpt:function(v){
             if (v=="0"){
                 this.opt1='c-dual-toggle__selected';
@@ -628,7 +642,13 @@ var cDualToggle=Vue.extend({
                 this.opt2='c-dual-toggle__selected';
                 this.state=1;
             }
-            this._submit();
+            if (this.initialized){
+                this._submit();
+            }
+            else {
+                this._init();
+            }
+            
         }
     },
 
@@ -636,6 +656,7 @@ var cDualToggle=Vue.extend({
     created:function(){
         if (this.status!=undefined){this.selectOpt(this.status)}
         else {this.selectOpt("0")}
+        this.initialized=true;
     },
     template:'<div class="c-dual-toggle {{wrap}}">\
                 <span class="c-dual-toggle__option c-dual-toggle__left-option" v-on:click="selectOpt(0)" v-bind:class="[opt1]">{{caption1}}</span>\
@@ -737,6 +758,9 @@ var cOrderedList = Vue.extend({
         _submit:function(){
             this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue:this.dataList});
         },
+        _init:function(){
+            this.$dispatch('eInitFormData',{mark:this.mark, cvalue:this.dataList});
+        },
         _reset:function(){
             this.dataList=[];
             this.textList=[];
@@ -777,6 +801,7 @@ var cOrderedList = Vue.extend({
     },
     created:function(){
         this.dataToText();
+        this._init();
     },
 
     events:{
@@ -788,12 +813,12 @@ var cOrderedList = Vue.extend({
         },
         'eResetAll':function(){
             this._reset();
-            this._submit();
+            this._init();
         },
         'eResetToDefaults':function(e){
             if (e.target==this.mark){
                 this._reset();
-                this._submit();
+                this._init();
             } 
         },
         eSetValue:function(e){
@@ -802,7 +827,7 @@ var cOrderedList = Vue.extend({
                 this.dataList=e.data;
                 console.log(JSON.stringify(e.data));
                 this.dataToText();
-                this._submit();
+                this._init();
             }
         }
     },

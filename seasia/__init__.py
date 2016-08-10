@@ -126,22 +126,18 @@ def root():
 
         elif q['action'] == 'loadResults':
             res = {}
-            fd = q['data']
-            if "startID" in fd:
-                if "finishID" in fd:
-                    routes = Route.query.filter(Route.startPointId == fd['startID'], Route.endPointId == fd['finishID'])
-                    res['results'] = []
-                    for r in routes:
-                        
-                        it = Itinerary(r, q['data'])
-                        res['results'].append(it.points)
-
-                else:
-                    res['results'] = []
-            else:
-                res['results'] = []
+            #fd = q['data']
+            routes = Route.query.all()  # filter(Route.startPointId == fd['startID'], Route.endPointId == fd['finishID'])
+            res['results'] = []
+            for r in routes:
+                it = Itinerary(r, q['data'])
+                res['results'].append(it.points)
 
             res['status'] = 'ok'
+
+        else:
+            res['status']='unknown'
+            res['action']=q['action']
 
         return json.dumps(res)
 
