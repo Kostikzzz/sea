@@ -134,12 +134,12 @@ def root():
                     for r in routes:
                         
                         it = Itinerary(r, q['data'])
-                        res['results'].append({"name": it.get_report()})
+                        res['results'].append(it.points)
 
                 else:
-                    res['results'] = [{'name': 'mmm'}]
+                    res['results'] = []
             else:
-                res['results'] = [{'name': 'kkk'}]
+                res['results'] = []
 
             res['status'] = 'ok'
 

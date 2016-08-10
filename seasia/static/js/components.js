@@ -1,4 +1,4 @@
-
+/*
 Vue.directive('click-outside', {
   bind () {
     let self  = this
@@ -16,6 +16,27 @@ Vue.directive('click-outside', {
 
   stopProp(event) { event.stopPropagation() }
 })
+*/
+
+Vue.directive('click-outside', {
+    bind:function() {
+        var self  = this;
+        this.event = function (event) {
+            self.vm.$emit(self.expression, event);
+        }
+        this.el.addEventListener('click', this.stopProp);
+        document.body.addEventListener('click', this.event);
+    },
+
+    unbind:function() {
+        this.el.removeEventListener('click', this.stopProp);
+        document.body.removeEventListener('click', this.event);
+    },
+
+    stopProp:function(event){
+        event.stopPropagation()
+    }
+});
 //===========================================================
 
 
@@ -486,7 +507,7 @@ Vue.component('c-cb-list', cCbList);
 var cDuration = Vue.extend({
 
 // C-DURATION -- PARAMS . . . . . . . . . . . . . . . . . . . . . . . . . . 
-    props:['wrap', 'def', 'mark'],
+    props:['wrap', 'def', 'mark', 'min'],
 
     // C-DURATION -- DATA . . . . . . . . . . . . . . . . . . . . . . . . . . 
     data: function(){
@@ -521,7 +542,10 @@ var cDuration = Vue.extend({
             this._submit();
         },
         dec:function(){
-            this.number--;
+            if (this.min && this.number>this.min){
+                this.number--;
+            }
+            
             this._submit();
         },
         setDays:function(){

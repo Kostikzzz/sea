@@ -1,4 +1,8 @@
 
+
+
+
+//======================================================
 var clicks={};
 
 var dataSource={
@@ -40,20 +44,21 @@ new Vue ({
     el:'body',
     data:{
         formData:{},
-        results:['f',3]
+        results:[]
     },
     methods:{
         loadResults:function(){
             var self = this;
             getResults('/', 'json', {action:'loadResults', data:this.formData}, function(res){
                 if (res.status=='ok'){
-                    console.log(JSON.stringify(res.results));
+                    //console.log(JSON.stringify(res.results));
                     self.results=res.results;
                 }
             });
         }
     },
     ready:function(){
+        setTimeout(function(){location.reload()},1000*60*30);
         this.$broadcast('setDefaults',{target:'start-place', data:{
             title:'Most popular:',
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
