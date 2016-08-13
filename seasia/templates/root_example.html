@@ -41,13 +41,9 @@
 
         </div>
         <div class="col-lg-6">
-            <div v-for="r in results" v-if="results.length>0">
+            <div v-for="r in results" track-by="$index" v-if="results.length>0">
                 <h1 v-text="'Option '+($index+1)"></h1>
-                <div v-for="p in r" v-if="p.cur>0">
-                    <template v-for="n in p.cur">
-                    <h3 v-text="p.text"></h3>
-                    </template>
-                </div>
+                <div v-text="r"></div>
             </div>
         </div>
         <div class="col-lg-3">

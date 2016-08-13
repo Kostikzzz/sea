@@ -51,7 +51,7 @@ new Vue ({
             var self = this;
             getResults('/', 'json', {action:'loadResults', data:this.formData}, function(res){
                 if (res.status=='ok'){
-                    //console.log(JSON.stringify(res.results));
+                    console.log(JSON.stringify(res.results));
                     self.results=res.results;
                 } else if (res.status=='unknown'){
                     alert('Status unknown. Action '+res.action);
@@ -78,19 +78,24 @@ new Vue ({
     },
     events:{
         eUpdateFormData:function(e){
-            var self = this;
-            if(Array.isArray(e)){
-                console.log('Got array!');
-                e.forEach(function(v){
-                    self.formData[v.mark]=v.cvalue;
-                });
-            } else {
-                this.formData[e.mark]=e.cvalue;
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>eUpdateFormData');
+            if (!e.parent){
+                var self = this;
+                if(Array.isArray(e)){
+                    console.log('Got array!');
+                    e.forEach(function(v){
+                        self.formData[v.mark]=v.cvalue;
+                    });
+                } else {
+                    this.formData[e.mark]=e.cvalue;
+                }
+                this.loadResults();
             }
-
-            this.loadResults();
         },
         eInitFormData:function(e){
+                        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>eInitFormData');
+                        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'+e.mark);
+
             var self = this;
             if(Array.isArray(e)){
                 console.log('Got array!');

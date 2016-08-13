@@ -12,7 +12,6 @@ class Itinerary():
         best_add = 0
 
         for ix, p in enumerate(self.points):
-            #print ('checking %s : id %d' % (p['text'], ix))
             add = 1
 
             if p['cur'] == 0:
@@ -26,8 +25,6 @@ class Itinerary():
         if best_index >= 0:
             self.points[best_index]['cur'] += best_add
             self.fn -= best_add
-            print ('added %d nights to %s' % (best_add, self.points[best_index]['text']))
-            print ('best_index %d' % best_index)
             return True
         else:
             return False
@@ -35,12 +32,15 @@ class Itinerary():
     def __init__(self, sr, q):
         self.query = q
         self.points = json.loads(sr.routeData)
-        print ('NEW ===============================')
+        self.fn = q["duration"]-3  # free nights
         for p in self.points:
+
             if "must" in p:
-                p['cur']=p['must']
+                p['cur'] = p['must']
+                self.fn = self.fn - p['must']
             else:
                 p['cur'] = 0
+
             dbp = Point.query.get(p['id'])
             p['pop'] = dbp.pointPop
             p['min'] = dbp.absMin
@@ -54,34 +54,27 @@ class Itinerary():
                 if val:
                     p['pop'] += p[key]
 
-        self.fn = q["duration"]-3  # free nights
-
         self.points[0]['cur'] = 1
         self.points[-1]['cur'] = 1
 
         for c in self.categories:
             if c in q['activitiesGroup'] and q['activitiesGroup'][c] is True:
-                print('=========')
                 self.addToBest(c, 'rmx')
-                print('=========')
 
-
-        if 'pace' in q and q['pace']==1:
+        if 'pace' in q and q['pace']==1:  # if pace == fast
             print ('1st pass')
             res = True
             while self.fn > 0 and res is True:
-                print ('fn: %d' % self.fn)
                 res = self.addToBest('pop', 'rmn')
 
-        print ('2nd pass')
         res = True
         while self.fn > 0 and res is True:
-            print ('fn: %d' % self.fn)
             res = self.addToBest('pop', 'rmx')
 
 
     def get_report(self):
-        text = ''
+        text = '>>> '
         for p in self.points:
-            text += "< %s > : %d \n" % (p['text'], p['cur'])
+            if p['cur']>0:
+                text += "%s: %d, " % (p['text'], p['cur'])
         return (text)

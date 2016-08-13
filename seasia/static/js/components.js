@@ -387,11 +387,13 @@ var cCheckbox=Vue.extend({
 
     methods:{
         _submit:function(){
-            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark})
+            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark});
+            console.log('CB SUBMIT');
         },
 
         _init:function(){
-            this.$dispatch('eInitFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark})
+            //this.$dispatch('eInitFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark});
+            console.log('CB INIT');
         },
         _reset:function(){
             this.setStatus(this.status);
@@ -420,21 +422,25 @@ var cCheckbox=Vue.extend({
 
     },
     created: function(){
+        console.log('CB CREATED');
         this.setStatus(this.status);
         this._init();
     },
     events:{
         'eSetValue':function(e){
+            console.log('CB SET VALUE');
             if (e.target==this.mark){
                 this.setStatus(e.data);
             }
             this._init();
         },
         'eResetAll':function(){
+            console.log('CB RESET ALL');
             this._reset();
             this._init();
         },
         'eResetToDefaults':function(){
+            console.log('CB DEFAULTS');
             if (e.target==this.mark){ this._reset(); this._init()}
         }
     },
