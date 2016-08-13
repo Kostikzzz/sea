@@ -386,15 +386,11 @@ var cCheckbox=Vue.extend({
     },
 
     methods:{
-        _submit:function(){
-            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark});
+        _submit:function(toServer){
+            this.$dispatch('eUpdateFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark, toServer: toServer});
             console.log('CB SUBMIT');
         },
 
-        _init:function(){
-            //this.$dispatch('eInitFormData',{cvalue:this.checked, parent:this.parent, mark:this.mark});
-            console.log('CB INIT');
-        },
         _reset:function(){
             this.setStatus(this.status);
         },
@@ -406,7 +402,7 @@ var cCheckbox=Vue.extend({
                 this.msg = 'unchecked'
             }
             clicks[this.mark]=this.checked;
-            this._submit();
+            this._submit(true);
         },
         setStatus:function(s){
             if (s=='on'){
@@ -417,31 +413,35 @@ var cCheckbox=Vue.extend({
                 this.msg="unchecked"
             }
             clicks[this.mark]=this.checked;
-            this._submit();
+            this._submit(false);
         },
 
     },
     created: function(){
-        console.log('CB CREATED');
+        //console.log('CB CREATED');
         this.setStatus(this.status);
-        this._init();
+        //this._init();
     },
     events:{
+/*        'eForceSubmit':function(e){
+                this._submit();
+        },*/
+
         'eSetValue':function(e){
             console.log('CB SET VALUE');
             if (e.target==this.mark){
                 this.setStatus(e.data);
             }
-            this._init();
+            //this._init();
         },
         'eResetAll':function(){
             console.log('CB RESET ALL');
             this._reset();
-            this._init();
+            //this._init();
         },
         'eResetToDefaults':function(){
             console.log('CB DEFAULTS');
-            if (e.target==this.mark){ this._reset(); this._init()}
+            if (e.target==this.mark){ this._reset(); /*this._init()*/}
         }
     },
     
@@ -463,13 +463,13 @@ var cCbList = Vue.extend({
         }
     },
     methods:{
-        _submit:function(){
-            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue:this.groupData, parent:this.parent})
+        _submit:function(toServer){
+            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue:this.groupData, parent:this.parent, toServer:toServer})
         },
-        _init:function(){
+/*        _init:function(){
             this.$dispatch('eInitFormData',{mark:this.mark, cvalue:this.groupData, parent:this.parent})
-        },
-        setAllValues: function(){
+        },*/
+        sendToChildren: function(){
             var self = this;
             this.dataList.forEach(function(d){
                 self.$broadcast('eSetValue',{target:d.mark, data:d.status});
@@ -480,7 +480,8 @@ var cCbList = Vue.extend({
             this.dataList.forEach(function(d){
                 d.status=v;
             });
-            this.setAllValues();
+            this.sendToChildren();
+            this._submit(true);
         }
     },
     props:['mark', 'wrap', 'parent'],
@@ -488,17 +489,25 @@ var cCbList = Vue.extend({
         'eSetValue':function(e){
             if(e.target==this.mark){
                 this.dataList=e.data;
-                this.setAllValues();
-                this._init();
+                this.sendToChildren();
+                this._submit(false);
             }
         },
         'eUpdateFormData':function(e){
             if (e.parent==this.mark){
                 this.groupData[e.mark] = e.cvalue;
                 console.log(JSON.stringify(this.groupData));
-                this._init();
+                this._submit(e.toServer);
             }
-        }
+        }/*,
+        'eForceSubmit':function(e){
+            //this.$broadcast('eForceSubmit',{emitter: this.mark});
+            this._submit();
+        }*/
+    },
+
+    ready:function(){
+        this._submit();
     },
     
     template:'<div class="c-cb-list {{wrap}}"><div class="c-cb-list__select-all">\
@@ -546,23 +555,20 @@ var cDuration = Vue.extend({
                 this.number=7;
                 this.measure='days'
             }
+            
         },
-        _submit:function(){
-            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue: this.measure=='days' ? this.number : this.number*7})
-        },
-
-        _init:function(){
-            this.$dispatch('eInitFormData',{mark:this.mark, cvalue: this.measure=='days' ? this.number : this.number*7})
+        _submit:function(toServer){
+            this.$dispatch('eUpdateFormData',{mark:this.mark, cvalue: this.measure=='days' ? this.number : this.number*7, toServer: toServer})
         },
         inc: function(){
             this.number++;
-            this._submit();
+            this._submit(true);
         },
         dec:function(){
             if (this.min && this.number>this.min){
                 this.number--;
             }
-            this._submit();
+            this._submit(true);
         },
         setDays:function(){
             if (this.measure=='weeks'){
@@ -572,7 +578,7 @@ var cDuration = Vue.extend({
                 this.weeksToggle='';
                 this.number=this.oldDaysNumber;
             }
-            this._submit();
+            this._submit(true);
         },
         setWeeks:function(){
             if (this.measure=='days'){
@@ -582,15 +588,21 @@ var cDuration = Vue.extend({
                 this.weeksToggle='c-duration__selected';
                 this.number=this.oldWeeksNumber;
             }
-            this._submit();
+            this._submit(true);
         }
     },
 
     // C-DURATION -- CREATED . . . . . . . . . . . . . . . . . . . . . . . . . . 
     created:function(){
         this._reset();
-        this._init();
+        this._submit(false);
+        //this._init();
     },
+/*    events:{
+        'eForceSubmit' : function(e){
+            this._submit();
+        }
+    },*/
 
     // C-DURATION -- TEMPLATE . . . . . . . . . . . . . . . . . . . . . . . . . . 
     template:'<div class="c-duration {{wrap}}"><label for="days-count" >Duration</label> \
@@ -617,8 +629,7 @@ var cDualToggle=Vue.extend({
     data: function(){
         return {
             opt1:'c-dual-toggle__selected',
-            opt2:'',
-            initialized:false
+            opt2:''
         }
     },
 
@@ -628,15 +639,13 @@ var cDualToggle=Vue.extend({
         return{
             state:0,
             opt1:'',
-            opt2:''
+            opt2:'',
+            initialized:false
         }
     },
     methods: {
-        _submit:function(){
-            this.$dispatch('eUpdateFormData', {mark:this.mark, cvalue:this.state});
-        },
-        _init:function(){
-            this.$dispatch('eInitFormData', {mark:this.mark, cvalue:this.state});
+        _submit:function(toServer){
+            this.$dispatch('eUpdateFormData', {mark:this.mark, cvalue:this.state, toServer:toServer});
         },
         selectOpt:function(v){
             if (v=="0"){
@@ -648,12 +657,13 @@ var cDualToggle=Vue.extend({
                 this.opt2='c-dual-toggle__selected';
                 this.state=1;
             }
-            if (this.initialized){
-                this._submit();
+
+            this._submit(this.initialized);
+
+            if (!this.initialized){
+                this.initialized=true;
             }
-            else {
-                this._init();
-            }
+
             
         }
     },
@@ -662,7 +672,6 @@ var cDualToggle=Vue.extend({
     created:function(){
         if (this.status!=undefined){this.selectOpt(this.status)}
         else {this.selectOpt("0")}
-        this.initialized=true;
     },
     template:'<div class="c-dual-toggle {{wrap}}">\
                 <span class="c-dual-toggle__option c-dual-toggle__left-option" v-on:click="selectOpt(0)" v-bind:class="[opt1]">{{caption1}}</span>\

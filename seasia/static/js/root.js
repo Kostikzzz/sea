@@ -75,6 +75,8 @@ new Vue ({
         this.$broadcast('eSetValue',{target:'countriesGroup', data: dataSource.countries});
         this.$broadcast('eSetPresets',{target:'startpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
         this.$broadcast('eSetPresets',{target:'finishpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
+
+        //this.$broadcast('eForceSubmit')
     },
     events:{
         eUpdateFormData:function(e){
@@ -89,10 +91,14 @@ new Vue ({
                 } else {
                     this.formData[e.mark]=e.cvalue;
                 }
-                this.loadResults();
+                if (e.toServer){
+                    this.loadResults();
+                }
+                
             }
-        },
-        eInitFormData:function(e){
+        }
+
+/*        eInitFormData:function(e){
                         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>eInitFormData');
                         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'+e.mark);
 
@@ -110,6 +116,6 @@ new Vue ({
                 this.loadResults();
             }
             
-        }
+        }*/
     }
 });
