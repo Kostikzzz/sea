@@ -130,9 +130,10 @@ def root():
             routes = Route.query.all()  # filter(Route.startPointId == fd['startID'], Route.endPointId == fd['finishID'])
             res['results'] = []
             for r in routes:
-                it = Itinerary(r, q['data'])
-                #res['results'].append(it.points)
-                res['results'].append(it.get_report())
+                it_obj = Itinerary(r, q['data'])
+                it = it_obj.get()
+                if it:
+                    res['results'].append(it)
 
             res['status'] = 'ok'
 

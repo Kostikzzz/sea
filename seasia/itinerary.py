@@ -17,7 +17,9 @@ class Itinerary():
             if p['cur'] == 0:
                 add = p['min']
 
-            if p['cur']+add < p[limit] and add <= self.fn and p[factor] > best_pop and ix != len(self.points):
+            if (p['cur']+add < p[limit] and add <= self.fn and
+                    p[factor] > best_pop and ix != len(self.points)):
+
                 best_pop = p[factor]
                 best_index = ix
                 best_add = add
@@ -25,7 +27,7 @@ class Itinerary():
         if best_index >= 0:
             self.points[best_index]['cur'] += best_add
             self.fn -= best_add
-            print ('fn a2b: %d' % self.fn)
+            #print ('fn a2b: %d' % self.fn)
             return True
         else:
             return False
@@ -35,7 +37,7 @@ class Itinerary():
         self.points = json.loads(sr.routeData)
         self.fn = q["duration"]-5  # free nights
         self.roundtrip = True if self.points[0] == self.points[-1] else False
-        print ('fn init: %d' % self.fn)
+        #print ('fn init: %d' % self.fn)
         for p in self.points:
 
             if "must" in p:
@@ -49,6 +51,7 @@ class Itinerary():
             p['min'] = dbp.absMin
             p['rmn'] = dbp.recMin
             p['rmx'] = dbp.recMax
+            p['max'] = dbp.absMax
 
             for c in self.categories:
                 p[c] = getattr(dbp, c)
@@ -59,6 +62,7 @@ class Itinerary():
 
         self.points[0]['cur'] = 2
         self.points[-1]['cur'] = 2
+        self.pace = q['pace']
 
         selected_cats = []
         for c in self.categories:
@@ -67,7 +71,7 @@ class Itinerary():
                 if c not in selected_cats:
                     selected_cats.append(c)
 
-        if 'pace' in q and q['pace']==1:  # if pace == fast
+        if self.pace==1:  # if pace == fast
             res = True
             while self.fn > 0 and res is True:
                 res = self.addToBest('pop', 'rmn')
@@ -75,6 +79,11 @@ class Itinerary():
         res = True
         while self.fn > 0 and res is True:
             res = self.addToBest('pop', 'rmx')
+
+        res = True
+        while self.fn > 0 and res is True:
+            res = self.addToBest('pop', 'max')
+
 
         # evaluate result
         relevance = 0
@@ -95,7 +104,57 @@ class Itinerary():
         for p in self.points:
             if p['cur']>0:
                 real_length+=1
-        self.real_pace = q['duration']/real_length
+        self.real_pace = (q['duration']-1)/real_length
+
+    def get(self):
+        accept = True
+        status = ''
+        # if  self.relevance >=2 and self.fn == 0: #  
+        #     if ((self.pace == 0 and self.real_pace >= 3) or
+        #      (self.pace == 1 and self.real_pace < 3 )):  
+        #         accept = True
+
+        if  self.relevance >=2:
+            status+='REL>2, '
+        else:
+            status+='REL<2, '
+
+        if self.fn == 0:  
+            status+='FN=0, '
+        else:
+            status+='FN != 0  FN=%d, ' % self.fn
+
+        if self.real_pace >= 3:
+            status+='SLOW, '
+        else:
+            status+='FAST, '
+
+
+        if accept:
+            print ('accept true')
+            res = {}
+            res['points']=[]
+            rd=[]
+            for p in self.points:
+                if p['cur'] > 0:
+                    rd.append(p['text'])
+                    res['points'].append({
+                        'name': p['text'],
+                        'id': p['id'],
+                        'nights': p['cur']
+                    })
+            res['desc']=' - '.join(rd)
+            res['status']=status
+
+        else:
+            print ('accept false')
+            res = False
+
+
+        return res
+
+
+
 
 
     def get_report(self):

@@ -41,9 +41,14 @@
 
         </div>
         <div class="col-lg-6">
-            <div v-for="r in results" track-by="$index" v-if="results.length>0">
-                <h1 v-text="'Option '+($index+1)"></h1>
-                <div v-text="r"></div>
+            <div v-for="r in results" 
+            track-by="$index" v-if="results.length>0">
+                <h3 v-text="'Option '+($index+1)+': '+r.desc"></h3>
+                <h4 v-text="r.status"></h4>
+                <div v-for="p in r.points"  track-by="$index">
+                    <span v-text="p.name"></span>&nbsp;
+                    <span v-text="p.nights"></span>
+                </div>
             </div>
         </div>
         <div class="col-lg-3">
