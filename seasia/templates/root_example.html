@@ -20,7 +20,7 @@
                 <!-- <div class="divider"></div> -->
                 <div class="section-body">
                     <h3>Trip duration</h3>
-                    <c-duration mark="duration" :def="[14,'days']" min="5"></c-duration>
+                    <c-duration mark="duration" :def="[21,'days']" min="5"></c-duration>
 
                     <h3>Pace</h3>
                     <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle> 
@@ -47,7 +47,7 @@
                     <h3 v-text="r.desc"></h3>
                     <div class="divider"></div>
                     <template v-for="p in r.points"  track-by="$index">
-                        <tr><td>transfer</td></tr>
+                        <tr v-if="p.transfer"><td></td><td v-text="p.transfer.desc"></td></tr>
                         <tr>
                             <td style="width: 90px;" v-text="'day '+p.day"></td>
                             <td style="padding: 20px 0" v-text="p.name"></td>

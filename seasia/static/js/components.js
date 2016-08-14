@@ -391,7 +391,7 @@ var cCheckbox=Vue.extend({
             console.log('CB SUBMIT');
         },
 
-        _reset:function(){
+        _reset:function(){  
             this.setStatus(this.status);
         },
         toggle:function(){
@@ -534,11 +534,11 @@ var cDuration = Vue.extend({
     // C-DURATION -- DATA . . . . . . . . . . . . . . . . . . . . . . . . . . 
     data: function(){
         return {
-            number: 14,
+            number: 21,
             measure:'days',
             daysToggle:'c-duration__selected',
             weeksToggle:'',
-            oldDaysNumber: 14,
+            oldDaysNumber: 21,
             oldWeeksNumber: 3
         }
     },

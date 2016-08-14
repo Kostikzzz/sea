@@ -1,5 +1,5 @@
 import json
-from .models import Point
+from .models import Point, Transfer
 
 
 def share_items(l1,l2):
@@ -166,16 +166,28 @@ class Itinerary():
             res['points']=[]
             rd=[]
             day = 1
-            for p in self.points:
-                if p['cur'] > 0:
-                    rd.append(p['text'])
+            i=0
+            for p1, p2 in zip([0]+self.points, self.points):
+                if p2['cur'] > 0:
+                    rd.append(p2['text'])
+                    if i!=0:
+                        t = Transfer.query.filter(Transfer.p1_id==p1['id'], Transfer.p2_id==p2['id']).first()
+                        ttype = "Transfer" if not t.night else "Night transfer"
+                        transfer={'desc':'%s from %s to %s' % 
+                                        (ttype, p1['text'], p2['text'])}
+                        if t.night: 
+                            day+=1
+                    else:
+                        transfer = False
                     res['points'].append({
-                        'name': p['text'],
-                        'id': p['id'],
-                        'nights': p['cur'],
-                        'day': day
+                        'name': p2['text'],
+                        'id': p2['id'],
+                        'nights': p2['cur'],
+                        'day': day,
+                        'transfer':transfer
                     })
-                    day += p['cur']
+                    day += p2['cur']
+                i+=1
 
             res['desc']=' - '.join(rd)
             res['status']=status
