@@ -14,7 +14,9 @@ var dataSource={
         {caption:'Culture', status:'off', mark:'rtClt'},
         {caption:'Food', status:'off', mark:'rtFod'},
         {caption:'Kids', status:'off', mark:'rtKid'},
-        {caption:'Nightlife', status:'off', mark:'rtNlf'}
+        {caption:'Nightlife', status:'off', mark:'rtNlf'},
+        {caption:'Diving', status:'off', mark:'rtDiv'},
+        {caption:'Shopping', status:'off', mark:'rtShp'}
     ],
     countries:[
         {caption:'Thailand', status:'on', mark:'thailand'},

@@ -41,15 +41,21 @@
 
         </div>
         <div class="col-lg-6">
-            <div v-for="r in results" 
+            <section v-for="r in results" 
             track-by="$index" v-if="results.length>0">
-                <h3 v-text="'Option '+($index+1)+': '+r.desc"></h3>
-                <h4 v-text="r.status"></h4>
-                <div v-for="p in r.points"  track-by="$index">
-                    <span v-text="p.name"></span>&nbsp;
-                    <span v-text="p.nights"></span>
+                <div class="section-body">
+                    <h3 v-text="r.desc"></h3>
+                    <div class="divider"></div>
+                    <template v-for="p in r.points"  track-by="$index">
+                        <tr><td>transfer</td></tr>
+                        <tr>
+                            <td style="width: 90px;" v-text="'day '+p.day"></td>
+                            <td style="padding: 20px 0" v-text="p.name"></td>
+                            <td v-text="p.nights+' night(s)'"></td>
+                        </tr>
+                    </template>
                 </div>
-            </div>
+            </section>
         </div>
         <div class="col-lg-3">
             <section>

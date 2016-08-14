@@ -2,6 +2,16 @@ import json
 from .models import Point
 
 
+def share_items(l1,l2):
+    res = False
+    for i in l1:
+        print ('item '+i)
+        if i.lower() in l2:
+            print ('shared' +i)
+            res = True
+    return res
+
+
 class Itinerary():
 
     categories = ['rtBch', 'rtHst', 'rtNat', 'rtClt', 'rtKid', 'rtDiv', 'rtShp', 'rtFod', 'rtNlf']
@@ -18,7 +28,8 @@ class Itinerary():
                 add = p['min']
 
             if (p['cur']+add < p[limit] and add <= self.fn and
-                    p[factor] > best_pop and ix != len(self.points)):
+                    p[factor] > best_pop and ix != len(self.points) and
+                    not p['dbl']):
 
                 best_pop = p[factor]
                 best_index = ix
@@ -35,16 +46,22 @@ class Itinerary():
     def __init__(self, sr, q):
         self.query = q
         self.points = json.loads(sr.routeData)
-        self.fn = q["duration"]-5  # free nights
-        self.roundtrip = True if self.points[0] == self.points[-1] else False
+        self.countries = json.loads(sr.countries)
+        self.fn = q["duration"]-1  # free nights
+        self.duration = q["duration"]
+        self.pace = q["pace"]
+        #self.roundtrip = True if self.points[0] == self.points[-1] else False
         #print ('fn init: %d' % self.fn)
+
+        used_points = []
         for p in self.points:
 
-            if "must" in p:
-                p['cur'] = p['must']
-                self.fn = self.fn - p['must']
-            else:
-                p['cur'] = 0
+            # if "must" in p:
+            #     p['cur'] = p['must']
+            #     self.fn = self.fn - p['must']
+            # else:
+            #     p['cur'] = 0
+
 
             dbp = Point.query.get(p['id'])
             p['pop'] = dbp.pointPop
@@ -60,8 +77,23 @@ class Itinerary():
                 if val:
                     p['pop'] += p[key]
 
-        self.points[0]['cur'] = 2
-        self.points[-1]['cur'] = 2
+            
+            if p['id'] in used_points:
+                p['dbl']=True
+                #p['cur'] = 
+                substract = p['min']
+            else:
+                p['dbl']=False
+                substract = p['rmn'] if self.pace == 0 else p['min']
+                used_points.append(p['id'])
+            if 'skip' in p and p['skip']:
+                substract = 0
+            
+            p['cur'] = substract
+            self.fn -= substract 
+
+        #self.points[0]['cur'] = 2
+        #self.points[-1]['cur'] = 2
         self.pace = q['pace']
 
         selected_cats = []
@@ -71,10 +103,12 @@ class Itinerary():
                 if c not in selected_cats:
                     selected_cats.append(c)
 
-        if self.pace==1:  # if pace == fast
-            res = True
-            while self.fn > 0 and res is True:
-                res = self.addToBest('pop', 'rmn')
+
+
+        #if self.pace==1:  # if pace == fast
+        # res = True
+        # while self.fn > 0 and res is True:
+        #     res = self.addToBest('pop', 'rmn')
 
         res = True
         while self.fn > 0 and res is True:
@@ -106,28 +140,24 @@ class Itinerary():
                 real_length+=1
         self.real_pace = (q['duration']-1)/real_length
 
+
     def get(self):
-        accept = True
+        disabled = []
+        for k, v in self.query['countriesGroup'].items():
+            if not v:
+                disabled.append(k)
+
+        print (disabled)
+
+        accept = False
         status = ''
-        # if  self.relevance >=2 and self.fn == 0: #  
-        #     if ((self.pace == 0 and self.real_pace >= 3) or
-        #      (self.pace == 1 and self.real_pace < 3 )):  
-        #         accept = True
 
-        if  self.relevance >=2:
-            status+='REL>2, '
-        else:
-            status+='REL<2, '
-
-        if self.fn == 0:  
-            status+='FN=0, '
-        else:
-            status+='FN != 0  FN=%d, ' % self.fn
-
-        if self.real_pace >= 3:
-            status+='SLOW, '
-        else:
-            status+='FAST, '
+        if not share_items(self.countries, disabled):
+            if  self.relevance >=1.8 and self.fn == 0:
+                if self.pace==0 and self.real_pace >3:
+                    accept = True
+                elif self.pace==1 and self.real_pace <=4:
+                    accept = True
 
 
         if accept:
@@ -135,14 +165,18 @@ class Itinerary():
             res = {}
             res['points']=[]
             rd=[]
+            day = 1
             for p in self.points:
                 if p['cur'] > 0:
                     rd.append(p['text'])
                     res['points'].append({
                         'name': p['text'],
                         'id': p['id'],
-                        'nights': p['cur']
+                        'nights': p['cur'],
+                        'day': day
                     })
+                    day += p['cur']
+
             res['desc']=' - '.join(rd)
             res['status']=status
 
@@ -150,16 +184,7 @@ class Itinerary():
             print ('accept false')
             res = False
 
-
         return res
 
 
 
-
-
-    def get_report(self):
-        text = 'R: '+str(self.relevance)+' P: '+str(self.real_pace)+' | '
-        for p in self.points:
-            if p['cur']>0:
-                text += "%s: %d, " % (p['text'], p['cur'])
-        return (text)

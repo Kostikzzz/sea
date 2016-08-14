@@ -46,6 +46,7 @@ class Point(db.Model):
     rtNlf = db.Column(db.Integer)
     starter = db.Column(db.Boolean, default=False)
 
+
     # ADMIN
 
     def fields():
@@ -73,6 +74,7 @@ class Route(db.Model):
     endPointId = db.Column(db.Integer, db.ForeignKey('points.id'))
     startPointName = db.Column(db.String(50))
     endPointName = db.Column(db.String(50))
+    countries = db.Column(db.Text)
 
     # itinerary = {
     #     "points": [],
