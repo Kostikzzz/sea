@@ -565,7 +565,8 @@ var cDuration = Vue.extend({
             this._submit(true);
         },
         dec:function(){
-            if (this.min && this.number>this.min){
+            var limit = this.measure =='days' && this.min ? this.min : 1;
+            if (this.number>limit){
                 this.number--;
             }
             this._submit(true);

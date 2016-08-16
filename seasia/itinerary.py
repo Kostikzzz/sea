@@ -173,9 +173,9 @@ class Itinerary():
         if (not share_items(self.countries, disabled) and 
                 (not self.is_shorty())):
             if  self.relevance >=1.8 and self.fn == 0:
-                if self.pace==0 and self.real_pace >3:
+                if self.pace==0 and self.real_pace >3.5:
                     accept = True
-                elif self.pace==1 and self.real_pace <=4:
+                elif self.pace==1 and self.real_pace <=3.5:
                     accept = True
 
 
@@ -205,20 +205,31 @@ class Itinerary():
                             transfer={'desc':'Not set'}
                         
                     else:
-                        transfer = False
+                        transfer = {
+                            'desc': "You arrive in %s" % p2['text'],
+                            'day':day,
+                            'comment':''
+                        }
+                    if i==len(self.points)-1:
+                        post = 'You depart from %s' % p2['text']
+                    else:
+                        post = ''
                     res['points'].append({
                         'name': p2['text'],
                         'id': p2['id'],
                         'nights': p2['cur'],
                         'day': day,
-                        'transfer':transfer
+                        'transfer':transfer,
+                        'post':post
                     })
                     day += p2['cur']
                 i+=1
 
             res['desc']=' - '.join(rd)
             res['name']= self.name
+            res['duration'] = self.duration
             res['status']=status
+
 
 
         else:

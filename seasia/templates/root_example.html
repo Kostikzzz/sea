@@ -63,6 +63,10 @@
                             <td style="padding: 20px 0" ><h4 v-text="p.name"></h4></td>
                             <td v-text="p.nights+' night(s)'"></td>
                         </tr>
+                        <tr v-if="p.post!=''">
+                            <td v-text="'day '+r.duration"></td>
+                            <td v-text="p.post"></td>
+                        </tr>
                     </template>
                 </div>
             </section>
