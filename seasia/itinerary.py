@@ -46,10 +46,12 @@ class Itinerary():
     def __init__(self, sr, q):
         self.query = q
         self.points = json.loads(sr.routeData)
+        self.name = sr.name
         self.countries = json.loads(sr.countries)
         self.fn = q["duration"]-1  # free nights
         self.duration = q["duration"]
         self.pace = q["pace"]
+
         #self.roundtrip = True if self.points[0] == self.points[-1] else False
         #print ('fn init: %d' % self.fn)
 
@@ -140,8 +142,24 @@ class Itinerary():
                 real_length+=1
         self.real_pace = (q['duration']-1)/real_length
 
+    def is_shorty(self):
+        points = [p for p in self.points if p['cur']>0]
+        if (len(points) == 2) and (points[0]['id'] == points[1]['id']):
+            return True
+        else:
+            return False
+
+
 
     def get(self):
+
+        # delete empty points
+        #self.points = [p for p in self.points if p['cur']>0]
+
+        for p in self.points:
+            if p['cur']==0:
+                self.points.remove(p)
+
         disabled = []
         for k, v in self.query['countriesGroup'].items():
             if not v:
@@ -152,7 +170,8 @@ class Itinerary():
         accept = False
         status = ''
 
-        if not share_items(self.countries, disabled):
+        if (not share_items(self.countries, disabled) and 
+                (not self.is_shorty())):
             if  self.relevance >=1.8 and self.fn == 0:
                 if self.pace==0 and self.real_pace >3:
                     accept = True
@@ -172,11 +191,19 @@ class Itinerary():
                     rd.append(p2['text'])
                     if i!=0:
                         t = Transfer.query.filter(Transfer.p1_id==p1['id'], Transfer.p2_id==p2['id']).first()
-                        ttype = "Transfer" if not t.night else "Night transfer"
-                        transfer={'desc':'%s from %s to %s' % 
-                                        (ttype, p1['text'], p2['text'])}
-                        if t.night: 
-                            day+=1
+                        if t:
+                            ttype = "Transfer" if not t.night else "Night transfer"
+                            transfer={
+                                'desc':'%s from %s to %s' % 
+                                            (ttype, p1['text'], p2['text']),
+                                'comment':t.comment,
+                                'day':day}
+
+                            if t.night: 
+                                day+=1
+                        else:
+                            transfer={'desc':'Not set'}
+                        
                     else:
                         transfer = False
                     res['points'].append({
@@ -190,7 +217,9 @@ class Itinerary():
                 i+=1
 
             res['desc']=' - '.join(rd)
+            res['name']= self.name
             res['status']=status
+
 
         else:
             print ('accept false')

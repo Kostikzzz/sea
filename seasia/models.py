@@ -106,7 +106,7 @@ class Transfer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     p1_name = db.Column(db.String(50))
     p2_name = db.Column(db.String(50))
-    description = db.Column(db.Text)
+    comment = db.Column(db.Text)
     p1_id = db.Column(db.Integer)
     p2_id = db.Column(db.Integer)
     night = db.Column(db.Boolean)

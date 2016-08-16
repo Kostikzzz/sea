@@ -4,8 +4,10 @@
 
 {% block styles %}
 {{ super() }}
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/ui.css') }}">
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel=stylesheet type=text/css 
+        href="{{ url_for('static', filename='css/ui.css') }}">
+    <link rel=stylesheet type=text/css 
+        href="{{ url_for('static', filename='css/components.css') }}">
 {% endblock %}
 
 {% block page_content %}
@@ -20,7 +22,7 @@
                 <!-- <div class="divider"></div> -->
                 <div class="section-body">
                     <h3>Trip duration</h3>
-                    <c-duration mark="duration" :def="[21,'days']" min="5"></c-duration>
+                    <c-duration mark="duration" :def="[21,'days']" min="7"></c-duration>
 
                     <h3>Pace</h3>
                     <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle> 
@@ -44,13 +46,21 @@
             <section v-for="r in results" 
             track-by="$index" v-if="results.length>0">
                 <div class="section-body">
-                    <h3 v-text="r.desc"></h3>
+                    <h3 v-text="r.name"></h3>
+                    <div class="subtitle" v-text="r.desc"></div>
                     <div class="divider"></div>
                     <template v-for="p in r.points"  track-by="$index">
-                        <tr v-if="p.transfer"><td></td><td v-text="p.transfer.desc"></td></tr>
+                        <tr v-if="p.transfer">
+                            <td v-text="'day '+p.transfer.day"></td>
+                            <td>
+                                <span v-text="p.transfer.desc"></span>
+                                <br/>
+                                <span v-text="p.transfer.comment"></span>
+                            </td>
+                        </tr>
                         <tr>
                             <td style="width: 90px;" v-text="'day '+p.day"></td>
-                            <td style="padding: 20px 0" v-text="p.name"></td>
+                            <td style="padding: 20px 0" ><h4 v-text="p.name"></h4></td>
                             <td v-text="p.nights+' night(s)'"></td>
                         </tr>
                     </template>
