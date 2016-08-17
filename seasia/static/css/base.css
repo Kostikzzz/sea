@@ -60,4 +60,38 @@ body {
   display: inline-block;
 }
 
+/* line 61, scss/base.scss */
+#navbar__middle {
+  font-size: 160%;
+  color: #b652bf;
+  text-align: left;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+@media screen and (max-width: 996px) {
+  /* line 72, scss/base.scss */
+  #navbar__middle {
+    font-size: 120%;
+  }
+
+  /* line 76, scss/base.scss */
+  #navbar {
+    height: 80px;
+  }
+}
+@media screen and (max-width: 600px) {
+  /* line 83, scss/base.scss */
+  #navbar {
+    text-align: center;
+  }
+
+  /* line 87, scss/base.scss */
+  #navbar__middle {
+    font-size: 100%;
+    text-align: center;
+    display: block;
+    margin-left: 0;
+  }
+}
 /* ================================= END NAVBAR =============================*/

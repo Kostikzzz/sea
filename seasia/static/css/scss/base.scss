@@ -58,9 +58,38 @@ body {
 }
 
 
-
+#navbar__middle{
+  
+  font-size: 160%;
+  color:$c-prim;
+  text-align: left;
+  display: inline-block;
+  margin-left: 20px;
+}
 
 @media screen and (max-width: 996px){
+
+  #navbar__middle{
+    font-size: 120%;
+  }
+
+  #navbar{
+    height: 80px;
+  }
+
+}
+
+@media screen and (max-width: 600px){
+  #navbar{
+    text-align: center;
+  }
+
+  #navbar__middle{
+    font-size: 100%;
+    text-align: center;
+    display: block;
+    margin-left:0;
+  }
 
 
 }
@@ -68,3 +97,4 @@ body {
 
 
 /* ================================= END NAVBAR =============================*/
+

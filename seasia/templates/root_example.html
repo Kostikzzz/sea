@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Hello world!{% endblock %}
+{% block title %}Route2Follow — Southeast Asia itinerary planner{% endblock %}
 
 {% block styles %}
 {{ super() }}
@@ -9,6 +9,9 @@
         href="{{ url_for('static', filename='css/ui.css') }}">
     <link rel=stylesheet type=text/css 
         href="{{ url_for('static', filename='css/components.css') }}">
+
+
+
 {% endblock %}
 
 {% block page_content %}
@@ -64,10 +67,22 @@
                     Collapse all
                 </span>
             </div>
-            <section v-for="r in results | orderBy 'relevance'" 
-            track-by="$index" v-if="results.length>0">
+            <section v-bind:class="{'section--collapsed':r.collapsed}" v-for="r in results | orderBy 'relevance'" 
+            track-by="$index" v-if="results.length>0" >
                 <div class="section-body">
-                    <h3 v-text="r.name"></h3>
+                    <h3 v-on:click="toggleThis(r.innerIndex)" style="cursor:pointer;font-weight:bolder; color:#f98733">
+                        <span 
+                            class="glyphicon glyphicon-triangle-bottom"
+                            v-show="!r.collapsed"
+                            style="color:#64d214">
+                        </span>
+                        <span 
+                            class="glyphicon glyphicon-triangle-right"
+                            v-show="r.collapsed"
+                            style="color:#64d214">
+                        </span>
+                        <span v-text="r.name"></span>
+                    </h3>
                     <div class="subtitle" v-text="r.desc"></div>
 
                     <div v-show="!r.collapsed">
@@ -83,7 +98,7 @@
                             </tr>
                             <tr>
                                 <td style="width: 90px;" v-text="'day '+p.day"></td>
-                                <td style="padding: 20px 0" ><h4 v-text="p.name"></h4></td>
+                                <td style="padding: 20px 0" ><h4 style="font-size:160%"v-text="p.name"></h4></td>
                                 <td v-text="p.nights+' night(s)'"></td>
                             </tr>
                             <tr v-if="p.post!=''">

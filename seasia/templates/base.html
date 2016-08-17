@@ -18,6 +18,8 @@
 {{ super() }}
     <!-- <link href='https://fonts.googleapis.com/css?family=Arimo&subset=latin,cyrillic' rel='stylesheet' type='text/css'> -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,600&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Kanit" 
+        rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/base.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/common.css') }}">
@@ -29,9 +31,16 @@
     <div id="navbar">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3" id="navbar__logo"><a href="{{url_for('root')}}"><span style="font-size:200%"> {{config['PROJECT_NAME']}}</span></a></div>
-                <div class="col-lg-6" id="navbar__middle"></div>
-                <div class="col-lg-3" id="navbar__user">
+                <div class="col-lg-12" id="navbar__logo">
+                    <a href="{{url_for('root')}}" style="text-decoration:none">
+                        <span style="font-size:200%; font-family: 'Kanit', sans-serif;color:#b652bf"> {{config['PROJECT_NAME']}}</span>
+                    </a>
+                    <span id="navbar__middle">
+                        YOUR SOUTHEAST ASIA ITINERARY
+                    </span>
+                </div>
+                <!-- <div class="col-lg-6" id="navbar__middle"></div> -->
+<!--                 <div class="col-lg-3" id="navbar__user">
                     {% if current_user.is_authenticated %}
                         <img id = "user__avatar" src="{{current_user.get_avatar()}}" class="img img-responsive avatar-small" />
                         
@@ -41,7 +50,7 @@
                     {% else %}
                         Sign in with <a href="{{url_for('social.g_login')}}">Google</a> or <a href="{{url_for('social.f_login')}}">Facebook</a>
                     {% endif %}
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

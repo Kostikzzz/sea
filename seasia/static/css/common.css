@@ -154,7 +154,10 @@ section h3 {
   padding: 15px;
 }
 
-/* line 146, scss/common.scss */
+/* .section--collapsed{
+    cursor: pointer;
+} */
+/* line 150, scss/common.scss */
 .divider {
   width: 100%;
   height: 1px;
@@ -163,23 +166,23 @@ section h3 {
   margin-bottom: 15px;
 }
 
-/* line 154, scss/common.scss */
+/* line 158, scss/common.scss */
 .form-inline {
   margin-bottom: 15px;
 }
 
-/* line 158, scss/common.scss */
+/* line 162, scss/common.scss */
 .form-label {
   font-weight: 600;
   margin-bottom: 0;
 }
 
-/* line 164, scss/common.scss */
+/* line 168, scss/common.scss */
 .avatar-big {
   border-radius: 6px;
 }
 
-/* line 168, scss/common.scss */
+/* line 172, scss/common.scss */
 .avatar-small {
   border-radius: 3px;
   width: 40px;
@@ -187,26 +190,26 @@ section h3 {
   float: left;
 }
 
-/* line 175, scss/common.scss */
+/* line 179, scss/common.scss */
 .inline-menu__item {
   display: inline-block;
   padding: 5px;
   margin-right: 10px;
   border-radius: 3px;
 }
-/* line 180, scss/common.scss */
+/* line 184, scss/common.scss */
 .inline-menu__item:hover {
   background-color: #c6c6c6;
   color: white;
 }
 
-/* line 186, scss/common.scss */
+/* line 190, scss/common.scss */
 .inline-menu__item--selected {
   background-color: #b652bf;
   color: white;
 }
 
-/* line 191, scss/common.scss */
+/* line 195, scss/common.scss */
 .column-item {
   margin-bottom: 20px;
 }

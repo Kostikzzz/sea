@@ -129,10 +129,13 @@ def root():
             #fd = q['data']
             routes = Route.query.all()  # filter(Route.startPointId == fd['startID'], Route.endPointId == fd['finishID'])
             res['results'] = []
+            i = 0
             for r in routes:
                 it_obj = Itinerary(r, q['data'])
                 it = it_obj.get()
                 if it:
+                    it['innerIndex']=i
+                    i+=1
                     res['results'].append(it)
 
             res['status'] = 'ok'

@@ -47,7 +47,7 @@ class Itinerary():
         self.query = q
         self.points = json.loads(sr.routeData)
         self.name = sr.name
-        self.countries = json.loads(sr.countries)
+        #self.countries = json.loads(sr.countries)
         self.fn = q["duration"]-1  # free nights
         self.duration = q["duration"]
         self.pace = q["pace"]
@@ -153,23 +153,28 @@ class Itinerary():
 
     def get(self):
 
-        # delete empty points
-        #self.points = [p for p in self.points if p['cur']>0]
-
+        # remove empty points and build actual countries list
+        self.countries=[]
         for p in self.points:
             if p['cur']==0:
                 self.points.remove(p)
+            else:
+                dbp = Point.query.get(p['id'])
+                name = dbp.geo.country.name
+                if name not in self.countries:
+                    self.countries.append(name)
 
+        # check what countries are disabled
         disabled = []
         for k, v in self.query['countriesGroup'].items():
             if not v:
                 disabled.append(k)
 
-        print (disabled)
-
+        # set defaults
         accept = False
         status = ''
 
+        # check which routes are ok
         if (not share_items(self.countries, disabled) and 
                 (not self.is_shorty())):
             if  self.relevance >=1.8 and self.fn == 0:
@@ -178,17 +183,21 @@ class Itinerary():
                 elif self.pace==1 and self.real_pace <=3.5:
                     accept = True
 
-
+        # build itinerary
         if accept:
             print ('accept true')
             res = {}
             res['points']=[]
             rd=[]
             day = 1
+
+            # for each point
             i=0
             for p1, p2 in zip([0]+self.points, self.points):
                 if p2['cur'] > 0:
-                    rd.append(p2['text'])
+                    rd.append(p2['text']+' ('+str(p2['cur'])+')')
+
+                    # if not first point
                     if i!=0:
                         t = Transfer.query.filter(Transfer.p1_id==p1['id'], Transfer.p2_id==p2['id']).first()
                         if t:
@@ -203,17 +212,22 @@ class Itinerary():
                                 day+=1
                         else:
                             transfer={'desc':'Not set'}
-                        
+                    
+                    # if first point
                     else:
                         transfer = {
                             'desc': "You arrive in %s" % p2['text'],
                             'day':day,
                             'comment':''
                         }
+
+                    # if last point
                     if i==len(self.points)-1:
                         post = 'You depart from %s' % p2['text']
                     else:
                         post = ''
+
+                    # add point info to results
                     res['points'].append({
                         'name': p2['text'],
                         'id': p2['id'],
@@ -225,6 +239,7 @@ class Itinerary():
                     day += p2['cur']
                 i+=1
 
+            # set itinerary properties
             res['desc']=' - '.join(rd)
             res['name']= self.name
             res['duration'] = self.duration

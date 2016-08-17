@@ -70,6 +70,9 @@ new Vue ({
             this.results.forEach(function(r){
                 r.collapsed = self.collapsed;
             });
+        },
+        toggleThis:function(i){
+            this.results[i].collapsed=!this.results[i].collapsed;
         }
     },
     ready:function(){
