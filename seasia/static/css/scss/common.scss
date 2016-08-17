@@ -112,6 +112,12 @@ section{
     margin-bottom: 8px;
 }
 
+.help-sign{
+    display: none;
+    cursor: pointer;
+    font-size: 75%;
+}
+
 .section-header{
     border-radius: 6px 6px 0 0;
     //background-color: #ce00e0;
@@ -123,6 +129,9 @@ section{
         //font-size: 180%;
         /* font-weight: bolder; */
         margin-bottom: 0px;
+    }
+    &:hover .help-sign{
+        display: inline;
     }
 }
 

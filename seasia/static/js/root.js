@@ -46,7 +46,9 @@ new Vue ({
     el:'body',
     data:{
         formData:{},
-        results:[]
+        results:[],
+        collapsed: true,
+        hasResults: false
     },
     methods:{
         loadResults:function(){
@@ -55,9 +57,18 @@ new Vue ({
                 if (res.status=='ok'){
                     console.log(JSON.stringify(res.results));
                     self.results=res.results;
+                    self.hasResults = self.results.length>0 ? true : false;
                 } else if (res.status=='unknown'){
                     alert('Status unknown. Action '+res.action);
                 }
+            });
+        },
+        toggleCollapsed:function(){
+            var self = this;
+            this.collapsed = !this.collapsed;
+            console.log('collapsed: '+ this.collapsed);
+            this.results.forEach(function(r){
+                r.collapsed = self.collapsed;
             });
         }
     },
@@ -79,6 +90,7 @@ new Vue ({
         this.$broadcast('eSetPresets',{target:'finishpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
 
         //this.$broadcast('eForceSubmit')
+        $('.help-sign').tooltip();
     },
     events:{
         eUpdateFormData:function(e){

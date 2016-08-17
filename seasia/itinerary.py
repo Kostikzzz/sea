@@ -228,6 +228,8 @@ class Itinerary():
             res['desc']=' - '.join(rd)
             res['name']= self.name
             res['duration'] = self.duration
+            res['relevance'] = self.relevance
+            res['collapsed'] = True
             res['status']=status
 
 

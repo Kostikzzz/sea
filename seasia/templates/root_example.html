@@ -4,6 +4,7 @@
 
 {% block styles %}
 {{ super() }}
+
     <link rel=stylesheet type=text/css 
         href="{{ url_for('static', filename='css/ui.css') }}">
     <link rel=stylesheet type=text/css 
@@ -29,45 +30,70 @@
 
                 </div>
             </section>
+            <!-- <button id="testbtn" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">OK</button>    -->
             <section>
                 <div class="section-header">
-                    <h2>Preferences</h2>
+                    <h2>
+                        Preferences
+                        <!-- <span class="glyphicon glyphicon-question-sign help-sign" data-toggle="tooltip" title="What is the most interesting thing for you? Select your favorite activities to automatically modify your itineraries" data-placement="top">
+                        </span> -->
+                    </h2>
                 </div>
                 <div class="section-body">
                 <!-- <div class="divider"></div> -->
-                               
-                    <h3>Activities</h3> 
+                            
+                    <h3 >Activities</h3> 
+
                     <c-cb-list mark="activitiesGroup"></c-cb-list>
                 </div>
             </section>
 
         </div>
         <div class="col-lg-6">
-            <section v-for="r in results" 
+            <div style="text-align:right">
+                <span class="plink" 
+                    v-show="collapsed && hasResults"
+                    v-on:click="toggleCollapsed">
+                    <span class="glyphicon glyphicon-triangle-right"></span>
+                    Expand all
+                </span>
+                <span class="plink" 
+                    v-show="!collapsed && hasResults"
+                    v-on:click="toggleCollapsed">
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    Collapse all
+                </span>
+            </div>
+            <section v-for="r in results | orderBy 'relevance'" 
             track-by="$index" v-if="results.length>0">
                 <div class="section-body">
                     <h3 v-text="r.name"></h3>
                     <div class="subtitle" v-text="r.desc"></div>
-                    <div class="divider"></div>
-                    <template v-for="p in r.points"  track-by="$index">
-                        <tr v-if="p.transfer">
-                            <td v-text="'day '+p.transfer.day"></td>
-                            <td>
-                                <span v-text="p.transfer.desc"></span>
-                                <br/>
-                                <span v-text="p.transfer.comment"></span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 90px;" v-text="'day '+p.day"></td>
-                            <td style="padding: 20px 0" ><h4 v-text="p.name"></h4></td>
-                            <td v-text="p.nights+' night(s)'"></td>
-                        </tr>
-                        <tr v-if="p.post!=''">
-                            <td v-text="'day '+r.duration"></td>
-                            <td v-text="p.post"></td>
-                        </tr>
-                    </template>
+
+                    <div v-show="!r.collapsed">
+                        <div class="divider"></div>
+                        <template v-for="p in r.points"  track-by="$index">
+                            <tr v-if="p.transfer">
+                                <td v-text="'day '+p.transfer.day"></td>
+                                <td>
+                                    <span v-text="p.transfer.desc"></span>
+                                    <br/>
+                                    <span v-text="p.transfer.comment"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width: 90px;" v-text="'day '+p.day"></td>
+                                <td style="padding: 20px 0" ><h4 v-text="p.name"></h4></td>
+                                <td v-text="p.nights+' night(s)'"></td>
+                            </tr>
+                            <tr v-if="p.post!=''">
+                                <td v-text="'day '+r.duration"></td>
+                                <td v-text="p.post"></td>
+                            </tr>
+                        </template>
+                    </div>
+
+
                 </div>
             </section>
         </div>
