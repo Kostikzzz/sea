@@ -8,9 +8,9 @@ var clicks={};
 var dataSource={
     testcb:[{caption:'QWertu', status:'on'},{caption:'fsese', status:'off'}],
     activities: [
-        {caption:'Beach', status:'off', mark:'rtBch'},
+        {caption:'Beach', status:'on', mark:'rtBch'},
         {caption:'Nature', status:'off', mark:'rtNat'},
-        {caption:'History', status:'off', mark:'rtHst'},
+        {caption:'History', status:'on', mark:'rtHst'},
         {caption:'Culture', status:'off', mark:'rtClt'},
         {caption:'Food', status:'off', mark:'rtFod'},
         {caption:'Kids', status:'off', mark:'rtKid'},
@@ -25,8 +25,7 @@ var dataSource={
         {caption:'Vietnam', status:'on', mark:'vietnam'},
         {caption:'Cambodia', status:'on', mark:'cambodia'},
         {caption:'Malaysia', status:'on', mark:'malaysia'},
-        {caption:'Singapore', status:'on', mark:'singapore'},
-        {caption:'Indonesia', status:'on', mark:'indonesia'}
+        {caption:'Singapore', status:'on', mark:'singapore'}
     ],
     presetsList:[
         {id:12, name: 'Bangkok'},
@@ -48,15 +47,17 @@ new Vue ({
         formData:{},
         results:[],
         collapsed: true,
-        hasResults: false
+        hasResults: false,
+        adventures:[]
     },
     methods:{
         loadResults:function(){
             var self = this;
             getResults('/', 'json', {action:'loadResults', data:this.formData}, function(res){
                 if (res.status=='ok'){
-                    console.log(JSON.stringify(res.results));
+                    console.log(JSON.stringify(res.adventures));
                     self.results=res.results;
+                    self.adventures = shuffle(res.adventures);
                     self.hasResults = self.results.length>0 ? true : false;
                 } else if (res.status=='unknown'){
                     alert('Status unknown. Action '+res.action);
@@ -77,7 +78,7 @@ new Vue ({
     },
     ready:function(){
         //setTimeout(function(){location.reload()},1000*60*30);
-        this.$broadcast('setDefaults',{target:'start-place', data:{
+        /*this.$broadcast('setDefaults',{target:'start-place', data:{
             title:'Most popular:',
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
             }
@@ -86,14 +87,15 @@ new Vue ({
             title:'Most popular:',
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
             }
-        });
+        });*/
         this.$broadcast('eSetValue',{target:'activitiesGroup', data: dataSource.activities});
         this.$broadcast('eSetValue',{target:'countriesGroup', data: dataSource.countries});
-        this.$broadcast('eSetPresets',{target:'startpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
-        this.$broadcast('eSetPresets',{target:'finishpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
+        /*this.$broadcast('eSetPresets',{target:'startpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});
+        this.$broadcast('eSetPresets',{target:'finishpoint', data: {'title':'Most popular:', 'list':dataSource.presetsList}});*/
 
         //this.$broadcast('eForceSubmit')
-        $('.help-sign').tooltip();
+        //$('.help-sign').tooltip();
+        this.loadResults();
     },
     events:{
         eUpdateFormData:function(e){

@@ -48,7 +48,7 @@ class Itinerary():
         self.points = json.loads(sr.routeData)
         self.name = sr.name
         #self.countries = json.loads(sr.countries)
-        self.fn = q["duration"]-1  # free nights
+        self.fn = int(q["duration"])-1  # free nights
         self.duration = q["duration"]
         self.pace = q["pace"]
 
@@ -123,11 +123,21 @@ class Itinerary():
 
         # evaluate result
         relevance = 0
+        failed = False
         if len(selected_cats) > 0:
             for c in selected_cats:
+                c_rel = 0
                 for p in self.points:
-                    relevance += p[c]*p['cur']
-            relevance = relevance / q['duration'] / len(selected_cats)
+                    c_rel += p[c]*p['cur']
+                if c_rel>0:
+                    relevance+=c_rel
+                else:
+                    failed = True
+
+            if not failed:
+                relevance = relevance / q['duration'] / len(selected_cats)
+            else:
+                relevance = 0
 
         else:
             for p in self.points:
@@ -141,6 +151,8 @@ class Itinerary():
             if p['cur']>0:
                 real_length+=1
         self.real_pace = (q['duration']-1)/real_length
+
+
 
     def is_shorty(self):
         points = [p for p in self.points if p['cur']>0]

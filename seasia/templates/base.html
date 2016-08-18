@@ -38,9 +38,12 @@
                     <span id="navbar__middle">
                         YOUR SOUTHEAST ASIA ITINERARY
                     </span>
+                     <!-- <div style="float:right" class="share42init"></div> -->
+
                 </div>
                 <!-- <div class="col-lg-6" id="navbar__middle"></div> -->
-<!--                 <div class="col-lg-3" id="navbar__user">
+
+       <!--          <div class="col-lg-3" id="navbar__user">
                     {% if current_user.is_authenticated %}
                         <img id = "user__avatar" src="{{current_user.get_avatar()}}" class="img img-responsive avatar-small" />
                         
@@ -51,6 +54,9 @@
                         Sign in with <a href="{{url_for('social.g_login')}}">Google</a> or <a href="{{url_for('social.f_login')}}">Facebook</a>
                     {% endif %}
                 </div> -->
+
+
+
             </div>
         </div>
     </div>
@@ -72,6 +78,8 @@
 {% block scripts %}
     {{ super() }}
     <script src ="{{ url_for('static', filename="js/common.js") }}" type="text/javascript"></script>
+    <script type="text/javascript" src="{{url_for('root', _external=True)}}static/lib/share42/share42.js"></script> 
+   
     {% if not debug_mode %}
         {% include 'metrica_counter.html' %}
     {% endif %}

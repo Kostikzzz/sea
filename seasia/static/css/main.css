@@ -1,0 +1,32 @@
+/* line 3, scss/main.scss */
+.inter-ads {
+  padding-left: 15px;
+  padding-bottom: 5px;
+}
+/* line 7, scss/main.scss */
+.inter-ads a.adventure__name {
+  color: #f98733;
+  text-decoration: none;
+  font-size: 140%;
+}
+/* line 13, scss/main.scss */
+.inter-ads .adventure__description {
+  border-style: dotted;
+  border-width: 0 0 0 1px;
+  border-color: #c6c6c6;
+  margin-left: 15px;
+  margin-top: 5px;
+  padding-left: 25px;
+  display: none;
+  margin-bottom: 20px;
+}
+/* line 26, scss/main.scss */
+.inter-ads .adventure:hover .adventure__description {
+  display: block;
+}
+/* line 31, scss/main.scss */
+.inter-ads .cta-btn {
+  background-color: #55d426;
+  font-weight: bolder;
+  color: white;
+}

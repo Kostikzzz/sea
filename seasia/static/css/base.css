@@ -45,14 +45,16 @@ body {
   border-color: #efefef;
   border-style: solid;
   height: 60px;
+  /* text-align: center; */
+  margin-bottom: 20px;
 }
 
-/* line 50, scss/base.scss */
+/* line 52, scss/base.scss */
 #user__image {
   display: inline-block;
 }
 
-/* line 53, scss/base.scss */
+/* line 55, scss/base.scss */
 #user__nickname {
   padding-left: 10px;
   padding-top: 6px;
@@ -60,33 +62,34 @@ body {
   display: inline-block;
 }
 
-/* line 61, scss/base.scss */
+/* line 63, scss/base.scss */
 #navbar__middle {
-  font-size: 160%;
+  font-size: 140%;
   color: #b652bf;
   text-align: left;
   display: inline-block;
   margin-left: 20px;
+  vertical-align: 8%;
 }
 
 @media screen and (max-width: 996px) {
-  /* line 72, scss/base.scss */
+  /* line 75, scss/base.scss */
   #navbar__middle {
     font-size: 120%;
   }
 
-  /* line 76, scss/base.scss */
+  /* line 79, scss/base.scss */
   #navbar {
     height: 80px;
   }
 }
 @media screen and (max-width: 600px) {
-  /* line 83, scss/base.scss */
+  /* line 86, scss/base.scss */
   #navbar {
     text-align: center;
   }
 
-  /* line 87, scss/base.scss */
+  /* line 90, scss/base.scss */
   #navbar__middle {
     font-size: 100%;
     text-align: center;

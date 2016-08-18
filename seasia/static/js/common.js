@@ -4,11 +4,11 @@ var csrftoken = $('meta[name=csrf-token]').attr('content');
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
         }
         console.log(csrftoken);
     }
-})
+});
 
 function getResults(route, resultType, formData, callback){
     console.log('requesting '+route);
@@ -40,3 +40,15 @@ function inArray(needle,haystack)
     }
     return false;
 }
+
+function shuffle(a){
+    for (i=0; i<a.length; i++){
+        var rnd = Math.floor(Math.random()*a.length);
+        var t = a[rnd];
+        a[rnd]=a[i];
+        a[i]=t;
+    }
+    return a;
+}
+
+

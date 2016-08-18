@@ -12,13 +12,16 @@ from .cache import cache
 
 from .db import db
 
-from .config import DEBUG, SECRET_KEY, DBURI, MAINTENANCE, PROJECT_NAME, MAIL_SERVER, MAIL_PORT, MAIL_USE_TLS, MAIL_USE_SSL, MAIL_USERNAME, MAIL_PASSWORD
+from .config import DEBUG, SECRET_KEY, DBURI, MAINTENANCE, PROJECT_NAME, MAIL_SERVER, MAIL_PORT, MAIL_USE_TLS, MAIL_USE_SSL, MAIL_USERNAME, MAIL_PASSWORD, ADVENTURES
 from .social import social, oauth
 from .social.models import User
 from .admin import admin
 from .models import Point, Route
 
 from .itinerary import Itinerary
+
+from .logger import StrangersLog
+from .toolbox import create_marker
 
 # from .mailer import mail
 
@@ -111,6 +114,8 @@ def maintenance():
 def root():
 
     if (request.method) == 'GET':
+        if 'marker' not in session.keys():
+            session['marker']=create_marker(request)
         return render_template('root_example.html')
 
     elif (request.method) == 'POST':
@@ -125,6 +130,7 @@ def root():
             res['status'] = 'ok'
 
         elif q['action'] == 'loadResults':
+            StrangersLog.write('request',json.dumps(q['data']))
             res = {}
             #fd = q['data']
             routes = Route.query.all()  # filter(Route.startPointId == fd['startID'], Route.endPointId == fd['finishID'])
@@ -138,6 +144,7 @@ def root():
                     i+=1
                     res['results'].append(it)
 
+            res['adventures'] = ADVENTURES
             res['status'] = 'ok'
 
         else:

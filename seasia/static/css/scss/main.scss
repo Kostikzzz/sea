@@ -1,0 +1,36 @@
+@import "config";
+
+.inter-ads{
+    padding-left:15px;
+    padding-bottom: 5px;
+
+    a.adventure__name{
+        color:$c-sec;
+        text-decoration: none;
+        font-size: 140%;
+    }
+
+    .adventure__description{
+        border-style: dotted;
+        border-width: 0 0 0 1px;
+        border-color: $gray4;
+        margin-left: 15px;
+        margin-top: 5px;
+        padding-left: 25px;
+        display: none;
+        margin-bottom: 20px;
+    }
+
+    .adventure:hover {
+
+        .adventure__description{
+            display: block;
+        }
+    }
+
+    .cta-btn{
+        background-color: $green;
+        font-weight: bolder;
+        color: white;
+    }
+}
