@@ -55,7 +55,7 @@ new Vue ({
             var self = this;
             getResults('/', 'json', {action:'loadResults', data:this.formData}, function(res){
                 if (res.status=='ok'){
-                    console.log(JSON.stringify(res.adventures));
+                    //console.log(JSON.stringify(res.adventures));
                     self.results=res.results;
                     self.adventures = shuffle(res.adventures);
                     self.hasResults = self.results.length>0 ? true : false;
@@ -67,7 +67,7 @@ new Vue ({
         toggleCollapsed:function(){
             var self = this;
             this.collapsed = !this.collapsed;
-            console.log('collapsed: '+ this.collapsed);
+            //console.log('collapsed: '+ this.collapsed);
             this.results.forEach(function(r){
                 r.collapsed = self.collapsed;
             });
@@ -77,7 +77,7 @@ new Vue ({
         }
     },
     ready:function(){
-        //setTimeout(function(){location.reload()},1000*60*30);
+        setTimeout(function(){location.reload()},1000*60*5);
         /*this.$broadcast('setDefaults',{target:'start-place', data:{
             title:'Most popular:',
             list: ['Moscow', 'Siem Reap', 'Hanoi','Ho Chi Minh']
@@ -103,7 +103,7 @@ new Vue ({
             if (!e.parent){
                 var self = this;
                 if(Array.isArray(e)){
-                    console.log('Got array!');
+                    //console.log('Got array!');
                     e.forEach(function(v){
                         self.formData[v.mark]=v.cvalue;
                     });
@@ -113,7 +113,7 @@ new Vue ({
                 if (e.toServer){
                     this.loadResults();
                 }
-                
+
             }
         }
 
@@ -134,7 +134,7 @@ new Vue ({
             if (Object.keys(this.formData).length>=19){
                 this.loadResults();
             }
-            
+
         }*/
     }
 });

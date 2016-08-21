@@ -30,3 +30,10 @@
   font-weight: bolder;
   color: white;
 }
+
+/* line 38, scss/main.scss */
+#results-header {
+  text-align: center;
+  color: #b652bf;
+}
+

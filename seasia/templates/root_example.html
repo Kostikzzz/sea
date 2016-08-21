@@ -5,11 +5,11 @@
 {% block styles %}
 {{ super() }}
 
-    <link rel=stylesheet type=text/css 
+    <link rel=stylesheet type=text/css
         href="{{ url_for('static', filename='css/ui.css') }}">
-    <link rel=stylesheet type=text/css 
+    <link rel=stylesheet type=text/css
         href="{{ url_for('static', filename='css/components.css') }}">
-    <link rel=stylesheet type=text/css 
+    <link rel=stylesheet type=text/css
         href="{{ url_for('static', filename='css/main.css') }}">
 
 
@@ -31,7 +31,7 @@
                     <c-duration mark="duration" :def="[21,'days']" min="7"></c-duration>
 
                     <h3>Pace</h3>
-                    <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle> 
+                    <c-dual-toggle mark="pace" wrap="column-item" caption1="Slow" caption2="Fast" status="0"></c-dual-toggle>
 
                 </div>
             </section>
@@ -46,41 +46,66 @@
                 </div>
                 <div class="section-body">
                 <!-- <div class="divider"></div> -->
-                            
-                    <h3 >Activities</h3> 
+
+                    <h3 >Activities</h3>
 
                     <c-cb-list mark="activitiesGroup"></c-cb-list>
                 </div>
             </section>
 
         </div>
-        <div class="col-lg-6">
-            <h3 v-show="hasResults">Here are some itinerary ideas for your trip:</h3>
-            <div style="text-align:right">
-                <span class="plink" 
+
+
+        <div class="col-lg-3 col-lg-push-6">
+            <section>
+                <div class="section-header">
+                    <h2>Filters</h2>
+                </div>
+                <!-- <div class="divider"></div> -->
+
+                <div class="section-body">
+                    <h3>Countries</h3>
+                        <c-cb-list mark="countriesGroup"></c-cb-list>
+                </div>
+            </section>
+            <div style="padding-left:50px; padding-top:50px;" class="visible-lg-block">
+                  <a href="http://www.kqzyfj.com/click-8016241-12272625-1436277960000" target="_top">
+            <img src="http://www.awltovhc.com/image-8016241-12272625-1436277960000" width="160" height="600" alt="" border="0"/></a>
+            </div>
+        </div>
+
+
+
+        <div class="col-lg-6 col-lg-pull-3">
+            <div id="results-header" v-show="hasResults">
+                <h2>Here is what we found for you:</h2>
+                <h3><span v-text="results.length"></span> result(s)</h3>
+            </div>
+            <div style="text-align:center" >
+                <span class="btn btn-small"
                     v-show="collapsed && hasResults"
                     v-on:click="toggleCollapsed">
                     <span class="glyphicon glyphicon-triangle-right"></span>
-                    Expand all
+                    <span>Expand all</span>
                 </span>
-                <span class="plink" 
+                <span class="btn btn-small"
                     v-show="!collapsed && hasResults"
                     v-on:click="toggleCollapsed">
                     <span class="glyphicon glyphicon-triangle-bottom"></span>
-                    Collapse all
+                    <span>Collapse all</span>
                 </span>
             </div>
-            <template v-for="r in results | orderBy 'relevance' -1" 
+            <template v-for="r in results | orderBy 'relevance' -1"
             track-by="$index" v-if="results.length>0" >
             <section v-bind:class="{'section--collapsed':r.collapsed}" >
                 <div class="section-body">
                     <h3 v-on:click="toggleThis(r.innerIndex)" style="cursor:pointer;font-weight:bolder; color:#f98733">
-                        <span 
+                        <span
                             class="glyphicon glyphicon-triangle-bottom"
                             v-show="!r.collapsed"
                             style="color:#64d214">
                         </span>
-                        <span 
+                        <span
                             class="glyphicon glyphicon-triangle-right"
                             v-show="r.collapsed"
                             style="color:#64d214">
@@ -114,19 +139,20 @@
 
 
                 </div>
-                
+
             </section>
 
             <div v-show="!r.collapsed" class="inter-ads">
                 Check also this affordable small group tour:<br/>
                 <div class="adventure">
-                    <a class="adventure__name"
+                    <span class="glyphicon glyphicon-star"style="color:#64d214">
+                        </span><a class="adventure__name"
                     v-bind:href="adventures[$index].link" v-text="adventures[$index].name"></a>
                     <div class="adventure__description">
                         <p v-text="adventures[$index].desc"></p>
                         <a class="cta-btn btn btn-xs"
                         v-bind:href="adventures[$index].link">
-                            GET MORE INFO 
+                            GET MORE INFO
                             <span class="glyphicon glyphicon-triangle-right">
                             </span>
                         </a>
@@ -145,7 +171,7 @@
                         <p v-text="adventures[$index].desc"></p>
                         <a class="cta-btn btn btn-xs"
                         v-bind:href="adventures[$index].link">
-                            GET MORE INFO 
+                            GET MORE INFO
                             <span class="glyphicon glyphicon-triangle-right">
                             </span>
                         </a>
@@ -153,23 +179,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <section>
-                <div class="section-header">
-                    <h2>Filters</h2>
-                </div>
-                <!-- <div class="divider"></div> -->
-                <div class="section-body">
-                    <h3>Countries</h3>
-                        <c-cb-list mark="countriesGroup"></c-cb-list>
-                </div>
-            </section>
-            <div style="padding-left:50px; padding-top:50px;" class="visible-lg-block">
-                  <a href="http://www.kqzyfj.com/click-8016241-12272625-1436277960000" target="_top">
-            <img src="http://www.awltovhc.com/image-8016241-12272625-1436277960000" width="160" height="600" alt="" border="0"/></a>
-            </div>
-        </div>
-        
+
+
+
 
     </div>
     <div class="row">
@@ -186,6 +198,6 @@
     <script src ="{{ url_for('static', filename="js/common.js") }}" type="text/javascript"></script>
     <script src ="{{ url_for('static', filename="js/components.js") }}" type="text/javascript"></script>
     <script src ="{{ url_for('static', filename="js/root.js") }}" type="text/javascript"></script>
-    
-    
+
+
 {% endblock %}
